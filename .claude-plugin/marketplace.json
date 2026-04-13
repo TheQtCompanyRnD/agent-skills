@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "Official Qt Skills & Tools",
+  "description": "Official agentic engineering skills and tools for Qt software development",
+  "owner": {
+    "name": "Qt Group",
+    "email": "info@qt.io"
+  },
+  "plugins": [
+    {
+      "name": "qt-development-skills",
+      "description": "This plug-in contains agentic engineering skills for Qt software development, such as Qt C++/QML code review, QML coding, or Qt C++/QML code documentation skills. The skills have been tested with frontier LLMs from the Claude, Gemini, and GPT LLM families. These agentic development skills use AI and can make mistakes. Always double-check the output carefully.",
+      "source": "./",
+      "version": "1.0.0",
+      "author": {
+        "name": "Qt Group"
+      },
+      "tags": ["qt", "code-review", "qml", "qt-quick", "development"]
+    }
+  ]
+}

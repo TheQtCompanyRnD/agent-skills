@@ -15,6 +15,7 @@ metadata:
   author: qt-ai-skills
   version: "2.0"
   qt-version: "6.x"
+  category: review
 argument-hint: "[framework]"
 ---
 

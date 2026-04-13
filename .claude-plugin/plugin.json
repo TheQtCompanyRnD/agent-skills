@@ -1,0 +1,8 @@
+{
+  "name": "qt-development-skills",
+  "description": "Agentic engineering skills for Qt software development, including Qt C++/QML code review, QML coding, and Qt C++/QML code documentation. These skills use AI and can make mistakes. Always double-check the output carefully.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Qt Group"
+  }
+}
