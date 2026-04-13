@@ -1,71 +1,85 @@
 # Qt AI Skills
 
-A collection of
-[Agent Skills](https://agentskills.io/specification) for Qt
-development, designed for use with agentic AI coding tools such
-as Claude Code, GitHub Copilot, Codex, Cursor, and others.
+Official agentic engineering skills for Qt software development
+and quality assurance, designed for use with AI coding tools
+such as Claude Code, Codex CLI, Gemini CLI, GitHub Copilot,
+Cursor, and others.
 
-Skills are designed to be tool-agnostic and LLM-agnostic wherever
-possible, following the agentskills.io specification.
+Skills have been tested with frontier LLMs from the Claude,
+Gemini, and GPT model families.
 
-Each skill provides specialized knowledge and workflows for a
-specific aspect of Qt development — from UI/UX through to build
-systems, architecture, and testing.
+There is no settled industry standard for AI skill packaging.
+Each platform has its own conventions. Our canonical format
+uses `SKILL.md` with YAML frontmatter in a directory-based
+structure — this works natively on Claude Code and Codex CLI,
+and can be adapted to other platforms through condensed
+variants. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full
+cross-platform story.
+
+> These agentic engineering skills use AI and can make mistakes.
+> Always double-check the output carefully.
+>
+> Before using the skills under Qt commercial licensing, make
+> sure you have understood and agree to the
+> [Qt AI Services Terms & Conditions](https://www.qt.io/terms-conditions/ai-services-2025-06).
+> By using the skills or MCP tools, you accept these terms &
+> conditions and that you have the right to do so on behalf of
+> your employer.
+
+## Skills
+
+| Skill | Type | Description |
+|-------|------|-------------|
+| `qt-cpp-review` | Review | Deterministic linting + 6 parallel deep-analysis agents for Qt C++ code. Covers model rule compliance, memory ownership, thread safety, correctness, error handling, and performance. |
+| `qt-qml-review` | Review | Deterministic QML linting (47+ rules) + parallel deep-analysis agents for bindings, layout, loaders, delegates, states, and performance. |
+| `qt-qml` | Conceptual | QML best practices for writing, reviewing, fixing, and refactoring. Corrects systematic LLM pre-training biases around bindings, scoping, modules, JS interop, and types. |
+| `qt-qml-docs` | Process | Generates Markdown reference documentation for QML components and applications from .qml source files. |
+
+### Skill types
+
+- **Review** — structured code review workflows combining
+  deterministic linters with deep AI analysis
+- **Process** — workflows and decision frameworks
+  (architecture, build, test, documentation)
+- **Conceptual** — mental model corrections for areas where
+  LLMs consistently fail (declarative QML, C++/QML boundary,
+  Widgets patterns, UI design)
+- **Tool** — guidance on Qt CLI tools and testing solutions
 
 ## Repository Structure
 
 ```
-qtaiskills/
-├── skills/                       # All skills live here
-│   ├── qt-architecture/          # Architecture, project structure,
-│   │   └── SKILL.md              #   tech choices, library selection
-│   ├── qt-qml/                   # QML language — bindings, scoping,
-│   │   └── SKILL.md              #   modules, JS interop, types
-│   ├── qt-qml-docs/              # QDoc for QML — API docs,
-│   │   └── SKILL.md              #   comments, examples
-│   ├── qt-ui/                    # UI design — layout, a11y,
-│   │   └── SKILL.md              #   theming, platform conventions
-│   ├── qt-widgets/               # QWidget patterns — subclassing,
-│   │   └── SKILL.md              #   QSS, .ui files, model/view
-│   ├── qt-cpp-qml-bridge/       # C++/QML integration patterns
-│   │   └── SKILL.md
-│   ├── qt-build-deploy/          # Build, packaging, CI,
-│   │   └── SKILL.md              #   cross-compilation
-│   ├── qt-testing/               # Test strategy, Qt Test,
-│   │   └── SKILL.md              #   QML Test, GTest
-│   ├── qt-code-review/           # Review checklists, anti-patterns
-│   │   └── SKILL.md
-│   └── .../                      # More skills added over time
-│
-├── tooling/                      # Per-tool installation helpers
-│   ├── claude-code/
-│   │   └── install.sh
-│   ├── codex/
-│   │   └── install.sh
-│   └── cursor/
-│       └── install.sh
-│
-├── docs/
-│   └── CONTRIBUTING.md
-├── LICENSE
-└── README.md
+skills/                           # All skills live here
+  qt-cpp-review/                  #   Each skill is a directory
+    SKILL.md                      #   with a SKILL.md entry point
+    references/                   #   and optional reference docs
+      lint-scripts/
+      qt-review-checklist.md
+    platforms/                    #   Platform-specific variants
+    agents/                       #   Platform metadata
+  qt-qml-review/
+  qt-qml/
+  ...
+tooling/                          # Per-tool installation helpers
+CONTRIBUTING.md
+LICENSE
+README.md
 ```
 
-## Skill Format (agentskills.io)
+## Skill Format
 
-Every skill follows the
-[Agent Skills specification](https://agentskills.io/specification).
-The minimum requirement is a directory containing a `SKILL.md`
-file with YAML frontmatter:
+Every skill is a directory containing a `SKILL.md` file with
+YAML frontmatter. This format aligns with what Claude Code and
+Codex CLI support natively:
 
-```markdown
+```yaml
 ---
 name: qt-ui
 description: >-
   Designs Qt Quick/QML user interfaces following Qt design
   guidelines. Use when creating or modifying QML UIs, layouts,
   styling, or visual components.
-license: BSD-3-Clause
+license: LicenseRef-Qt-Commercial OR BSD-3-Clause
 compatibility: >-
   Designed for Claude Code, GitHub Copilot, and similar agents.
 metadata:
@@ -73,76 +87,45 @@ metadata:
   version: "1.0"
   qt-version: "6.x"
 ---
-
-# Qt UI
-
-## When to use this skill
-...
-
-## Instructions
-...
 ```
 
-### Key rules from the spec
+### Key conventions
 
 - **`name`** must be lowercase alphanumeric + hyphens, max
   64 chars, and must match the directory name
 - **`description`** must describe what the skill does AND when
-  to use it (max 1024 chars, third person)
+  to use it — front-load the key information in the first 250
+  characters, as some platforms truncate beyond that point
 - **SKILL.md body** should stay under 500 lines — move detailed
   content to `references/` files
 - **Progressive disclosure**: agents load only
   `name`/`description` at startup, read `SKILL.md` body on
   activation, and pull `references/` files only when needed
-- **File references** should be one level deep from SKILL.md
-
-## Planned Skill Domains
-
-### Skill Types
-
-Skills in this repo fall into three categories:
-
-- **Process** — workflows and decision frameworks
-  (architecture, build, test, review, documentation)
-- **Conceptual** — mental model corrections for areas where
-  LLMs consistently fail (declarative QML, C++/QML boundary,
-  Widgets patterns, UI design)
-- **Tool** — guidance on Qt CLI tools (qmllinter, balsam,
-  qml.exe, etc.)
-
-### Skills
-
-| Skill | Type | Description |
-|-------|------|-------------|
-| `qt-architecture` | Process | Architecture decisions, project structure, module decomposition, library selection |
-| `qt-qml` | Conceptual | QML language — bindings, scoping, modules, JS interop, type system |
-| `qt-qml-docs` | Process | QDoc for QML — API documentation, comments, examples, documentation conventions |
-| `qt-ui` | Conceptual | UI design — layout, accessibility, theming, responsive design, platform conventions |
-| `qt-widgets` | Conceptual | QWidget patterns — subclassing, QSS, .ui files, model/view, widget lifecycle |
-| `qt-cpp-qml-bridge` | Conceptual | C++/QML integration — type registration, Q_PROPERTY, ownership across the boundary |
-| `qt-build-deploy` | Process | CMake setup, cross-compilation, CI integration, platform packaging, deployment |
-| `qt-testing` | Process | Test strategy, Qt Test, QML Test, Google Test, specialized environments |
-| `qt-code-review` | Process | Review checklists, Qt anti-patterns, performance pitfalls, API misuse |
 
 ## Multi-Tool Support
 
-Skills are authored to be tool-agnostic wherever possible,
-following the agentskills.io spec. However, different AI coding
-tools may consume skills differently:
+Skills are authored to be tool-agnostic wherever possible.
+However, different AI coding tools consume skills in different
+ways:
 
 | Tool | Skill Location | Format | Notes |
 |------|---------------|--------|-------|
-| **Claude Code** | `~/.claude/skills/` | SKILL.md (native) | Full spec support including `allowed-tools` |
-| **GitHub Copilot** | `.github/copilot/` | Markdown prompts | Via custom instructions |
-| **Codex** | Project config | Markdown prompts | May need adapted instructions |
-| **Cursor** | `.cursor/rules/` | `.mdc` rule files | Requires format conversion |
+| **Claude Code** | `~/.claude/skills/` | SKILL.md + references (native) | Full directory model with progressive loading |
+| **Codex CLI** | `.agents/skills/` | SKILL.md + references (native) | Full directory model; optional `agents/openai.yaml` for metadata |
+| **Gemini CLI** | `.gemini/commands/` | TOML commands, `GEMINI.md` context | Supports `@file.md` imports for references |
+| **GitHub Copilot** | `.github/prompts/`, `.github/agents/` | Markdown prompts / agent profiles | Self-contained; 4K chars (review), 30K chars (agents) |
+| **Cursor** | `.cursor/rules/` | Markdown rules with YAML frontmatter | Supports `@file` imports; ~500 lines recommended |
+| **Windsurf** | `.windsurf/rules/` | Markdown rules with YAML frontmatter | Self-contained; 6K chars per rule, 12K total |
+| **Amazon Q** | `.amazonq/rules/` | Plain Markdown | Self-contained; all rules always loaded |
+| **JetBrains AI** | `.aiassistant/rules/` | Plain Markdown | Activation configured in IDE settings |
 
-### When tool-specific variants are needed
+### When platform-specific variants are needed
 
 Most skills work across tools without changes. When a skill
-genuinely requires different instructions per tool (e.g.,
-different tool names, execution models, or permission patterns),
-create tool-specific overlays:
+needs to reach platforms that cannot read multi-file directories
+(Copilot, Windsurf, Amazon Q, JetBrains AI), or needs
+platform-specific metadata (Codex `openai.yaml`), create
+variants in a `platforms/` directory:
 
 ```
 skills/qt-build-deploy/
@@ -150,52 +133,155 @@ skills/qt-build-deploy/
 ├── references/
 │   ├── cmake-patterns.md
 │   └── cross-compile.md
-└── overlays/                      # Tool-specific adaptations
-    ├── claude-code.md
-    └── codex.md
+├── platforms/                     # Platform-specific variants
+│   ├── copilot.prompt.md          #   Self-contained Copilot agent
+│   └── windsurf.md                #   Compact version (under 6K chars)
+└── agents/                        # Platform metadata
+    └── openai.yaml                #   Codex CLI skill config
 ```
 
-The `overlays/` directory is not part of the agentskills.io
-spec — it is a convention for this repository. The core
-SKILL.md should reference overlays only when running under a
-specific tool.
+The `platforms/` and `agents/` directories are conventions for
+this repository.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details on
+creating platform variants.
 
 ## Installation
 
+Most AI coding tools can install skills directly from this
+GitHub repository. Choose the method for your platform below.
+
 ### Claude Code
 
-```bash
-# From the repo root
-bash tooling/claude-code/install.sh
+Install as a plugin using the Claude Code plugin system:
+
+```
+/plugin marketplace add TheQtCompanyRnD/agent-skills
+/plugin install qt-development-skills
 ```
 
-This symlinks (or copies) each skill directory into
-`~/.claude/skills/`.
+Or install individual skills manually:
 
-### Other Tools
+```bash
+# Symlink a skill into your personal skills directory
+ln -s "$(pwd)/skills/qt-qml-review" ~/.claude/skills/qt-qml-review
 
-See `tooling/<tool>/install.sh` for tool-specific installation
-instructions.
+# Or copy into a project for team use
+cp -r skills/qt-qml-review .claude/skills/qt-qml-review
+```
+
+Claude Code auto-discovers skills — no restart needed.
+
+### Codex CLI
+
+Use Vercel's cross-platform skill installer:
+
+```bash
+npx skills add TheQtCompanyRnD/agent-skills
+```
+
+Or copy skills manually:
+
+```bash
+cp -r skills/qt-qml-review ~/.codex/skills/qt-qml-review
+```
+
+Restart Codex after adding skills.
+
+> **Note:** Codex is evolving rapidly. If `~/.codex/skills/`
+> does not work, try `~/.agents/skills/` or `.agents/skills/`
+> in your project root.
+
+### GitHub Copilot
+
+Install as a plugin:
+
+```
+copilot plugin install qt-development-skills@TheQtCompanyRnD/agent-skills
+```
+
+Or copy platform variants into your repository:
+
+```bash
+# As a custom agent (invoked with @qt-qml-review in chat)
+cp skills/qt-qml-review/platforms/copilot.prompt.md \
+   .github/agents/qt-qml-review.agent.md
+
+# As code review instructions (auto-applied to matching files)
+cp skills/qt-qml-review/platforms/copilot-review.md \
+   .github/instructions/qt-qml-review.instructions.md
+```
+
+### Gemini CLI
+
+Install as an extension:
+
+```bash
+gemini extensions install https://github.com/TheQtCompanyRnD/agent-skills
+```
+
+Or import skills into your project's context file:
+
+```bash
+# Add to GEMINI.md (loaded automatically)
+echo '@skills/qt-qml-review/SKILL.md' >> GEMINI.md
+```
+
+### Cursor
+
+Install from the Cursor marketplace (search for
+"Qt AI Skills"), or copy skills into your project:
+
+```bash
+mkdir -p .cursor/rules/qt-qml-review
+cp skills/qt-qml-review/platforms/cursor-rule.md \
+   .cursor/rules/qt-qml-review/RULE.md
+```
+
+Cursor auto-discovers rules — no restart needed.
+
+### Windsurf
+
+Copy the compact platform variant into your project:
+
+```bash
+mkdir -p .windsurf/rules
+cp skills/qt-qml-review/platforms/windsurf.md \
+   .windsurf/rules/qt-qml-review.md
+```
+
+Restart Windsurf after adding rules. Rules must be under 6,000
+characters each, 12,000 characters total.
+
+### Amazon Q
+
+```bash
+mkdir -p .amazonq/rules
+cp skills/qt-qml-review/platforms/amazonq.md \
+   .amazonq/rules/qt-qml-review.md
+```
+
+All rules auto-load on next interaction.
+
+### JetBrains AI Assistant
+
+```bash
+mkdir -p .aiassistant/rules
+cp skills/qt-qml-review/platforms/jetbrains.md \
+   .aiassistant/rules/qt-qml-review.md
+```
+
+Then configure activation in **Settings > Tools > AI Assistant
+> Rules** (JetBrains does not auto-discover rule files).
 
 ## Contributing
 
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 on authoring new skills, including:
 
 - Naming conventions and frontmatter requirements
 - How to structure progressive disclosure
-- Testing skills across models (Haiku, Sonnet, Opus)
-- When and how to create tool-specific overlays
-
-## Validating Skills
-
-Use the
-[skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)
-reference library to validate:
-
-```bash
-skills-ref validate ./skills/qt-ui
-```
+- Testing skills across AI coding tools
+- When and how to create platform-specific variants
 
 ## License
 
