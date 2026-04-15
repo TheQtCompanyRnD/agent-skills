@@ -34,6 +34,7 @@ cross-platform story.
 | `qt-qml-review` | Review | Deterministic QML linting (47+ rules) + parallel deep-analysis agents for bindings, layout, loaders, delegates, states, and performance. |
 | `qt-qml` | Conceptual | QML best practices for writing, reviewing, fixing, and refactoring. Corrects systematic LLM pre-training biases around bindings, scoping, modules, JS interop, and types. |
 | `qt-qml-docs` | Process | Generates Markdown reference documentation for QML components and applications from .qml source files. |
+| `qt-cpp-doc` | Process | Generates Markdown reference documentation for Qt/C++ source files — classes, modules, utilities, headers, and entry points. |
 
 ### Skill types
 
@@ -59,7 +60,8 @@ skills/                           # All skills live here
     agents/                       #   Platform metadata
   qt-qml-review/
   qt-qml/
-  ...
+  qt-qml-docs/
+  qt-cpp-doc/
 tooling/                          # Per-tool installation helpers
 CONTRIBUTING.md
 LICENSE
