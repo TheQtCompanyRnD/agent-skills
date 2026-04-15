@@ -1,5 +1,5 @@
 ---
-name: qt-cpp-doc
+name: qt-cpp-docs
 description: >-
   Generates standalone Markdown reference documentation for any Qt/C++ source files —
   Qt Widgets classes, Qt Quick backends, Qt/C++ modules, plain C++ utilities, structs,

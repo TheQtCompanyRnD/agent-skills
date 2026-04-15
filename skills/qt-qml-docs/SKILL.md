@@ -1,5 +1,5 @@
 ---
-name: qt-qml-doc
+name: qt-qml-docs
 description: >-
   Generates standalone Markdown reference documentation for QML components and
   applications. Use this skill whenever you want to document QML files,
