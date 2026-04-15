@@ -19,7 +19,7 @@
         "name": "Qt Group"
       },
       "license": "BSD-3-Clause",
-      "repository": "https://codereview.qt-project.org/qtai/qtaiskills",
+      "repository": "https://github.com/TheQtCompanyRnD/agent-skills",
       "category": "development",
       "keywords": ["qt", "code-review", "qml", "qt-quick", "development"]
     }

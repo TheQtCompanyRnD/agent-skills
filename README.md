@@ -2,8 +2,8 @@
 
 Official agentic engineering skills for Qt software development
 and quality assurance, designed for use with AI coding tools
-such as Claude Code, Codex CLI, Gemini CLI, GitHub Copilot,
-Cursor, and others.
+such as Claude Code CLI, Codex CLI, Gemini CLI, and
+GitHub Copilot.
 
 Skills have been tested with frontier LLMs from the Claude,
 Gemini, and GPT model families.
@@ -57,11 +57,12 @@ skills/                           # All skills live here
       lint-scripts/
       qt-review-checklist.md
     platforms/                    #   Platform-specific variants
-    agents/                       #   Platform metadata
   qt-qml-review/
   qt-qml/
   qt-qml-docs/
   qt-cpp-docs/
+.claude-plugin/                   # Claude Code CLI & Copilot CLI plugin config
+gemini-extension.json             # Gemini CLI extension manifest
 CONTRIBUTING.md
 LICENSE
 README.md
@@ -112,22 +113,16 @@ ways:
 
 | Tool | Skill Location | Format | Notes |
 |------|---------------|--------|-------|
-| **Claude Code** | `~/.claude/skills/` | SKILL.md + references (native) | Full directory model with progressive loading |
-| **Codex CLI** | `.agents/skills/` | SKILL.md + references (native) | Full directory model; optional `agents/openai.yaml` for metadata |
-| **Gemini CLI** | `.gemini/commands/` | TOML commands, `GEMINI.md` context | Supports `@file.md` imports for references |
-| **GitHub Copilot** | `.github/prompts/`, `.github/agents/` | Markdown prompts / agent profiles | Self-contained; 4K chars (review), 30K chars (agents) |
-| **Cursor** | `.cursor/rules/` | Markdown rules with YAML frontmatter | Supports `@file` imports; ~500 lines recommended |
-| **Windsurf** | `.windsurf/rules/` | Markdown rules with YAML frontmatter | Self-contained; 6K chars per rule, 12K total |
-| **Amazon Q** | `.amazonq/rules/` | Plain Markdown | Self-contained; all rules always loaded |
-| **JetBrains AI** | `.aiassistant/rules/` | Plain Markdown | Activation configured in IDE settings |
+| **Claude Code CLI** | `~/.claude/skills/` | SKILL.md + references (native) | Full directory model with progressive loading |
+| **Codex CLI** | `~/.codex/skills/` | SKILL.md + references (native) | Full directory model; registered in `~/.codex/config.toml` |
+| **Gemini CLI** | Extension `skills/` | SKILL.md + references (native) | Installed via `gemini extensions install`; `@file.md` imports |
+| **GitHub Copilot** | `.github/agents/` | Markdown agent profiles | Self-contained; also installable as plugin via `.claude-plugin/` |
 
 ### When platform-specific variants are needed
 
 Most skills work across tools without changes. When a skill
 needs to reach platforms that cannot read multi-file directories
-(Copilot, Windsurf, Amazon Q, JetBrains AI), or needs
-platform-specific metadata (Codex `openai.yaml`), create
-variants in a `platforms/` directory:
+(e.g. Copilot), create variants in a `platforms/` directory:
 
 ```
 skills/qt-qml-review/
@@ -135,15 +130,11 @@ skills/qt-qml-review/
 ├── references/
 │   ├── qml-lint-rules.md
 │   └── qml-review-checklist.md
-├── platforms/                     # Platform-specific variants
-│   ├── copilot.prompt.md          #   Self-contained Copilot agent
-│   └── windsurf.md                #   Compact version (under 6K chars)
-└── agents/                        # Platform metadata
-    └── openai.yaml                #   Codex CLI skill config
+└── platforms/                     # Platform-specific variants
+    └── copilot.prompt.md          #   Self-contained Copilot agent
 ```
 
-The `platforms/` and `agents/` directories are conventions for
-this repository.
+The `platforms/` directory is a convention for this repository.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for full details on
 creating platform variants.
 
@@ -152,9 +143,9 @@ creating platform variants.
 Most AI coding tools can install skills directly from this
 GitHub repository. Choose the method for your platform below.
 
-### Claude Code
+### Claude Code CLI
 
-Install as a plugin using the Claude Code plugin system:
+Install as a plugin using the Claude Code CLI plugin system:
 
 ```
 /plugin marketplace add TheQtCompanyRnD/agent-skills
@@ -193,12 +184,12 @@ Restart Codex after adding skills.
 > does not work, try `~/.agents/skills/` or `.agents/skills/`
 > in your project root.
 
-### GitHub Copilot
-
-Install as a plugin:
+### GitHub Copilot CLI
+Register as a marketplace first, then install by name:
 
 ```
-copilot plugin install qt-development-skills@TheQtCompanyRnD/agent-skills
+copilot plugin marketplace add TheQtCompanyRnD/agent-skills
+copilot plugin install qt-development-skills@qt-skills-and-tools
 ```
 
 Or copy platform variants into your repository:
@@ -207,11 +198,12 @@ Or copy platform variants into your repository:
 # As a custom agent (invoked with @qt-qml-review in chat)
 cp skills/qt-qml-review/platforms/copilot.prompt.md \
    .github/agents/qt-qml-review.agent.md
-
-# As code review instructions (auto-applied to matching files)
-cp skills/qt-qml-review/platforms/copilot-review.md \
-   .github/instructions/qt-qml-review.instructions.md
 ```
+
+### VSCode Agents (Copilot and others)
+
+Run `Chat: Install Plugin From Source` from the Command Palette.
+Enter `https://github.com/TheQtCompanyRnD/agent-skills` (this repo) to clone and install
 
 ### Gemini CLI
 
@@ -227,53 +219,6 @@ Or import skills into your project's context file:
 # Add to GEMINI.md (loaded automatically)
 echo '@skills/qt-qml-review/SKILL.md' >> GEMINI.md
 ```
-
-### Cursor
-
-Install from the Cursor marketplace (search for
-"Qt AI Skills"), or copy skills into your project:
-
-```bash
-mkdir -p .cursor/rules/qt-qml-review
-cp skills/qt-qml-review/platforms/cursor-rule.md \
-   .cursor/rules/qt-qml-review/RULE.md
-```
-
-Cursor auto-discovers rules — no restart needed.
-
-### Windsurf
-
-Copy the compact platform variant into your project:
-
-```bash
-mkdir -p .windsurf/rules
-cp skills/qt-qml-review/platforms/windsurf.md \
-   .windsurf/rules/qt-qml-review.md
-```
-
-Restart Windsurf after adding rules. Rules must be under 6,000
-characters each, 12,000 characters total.
-
-### Amazon Q
-
-```bash
-mkdir -p .amazonq/rules
-cp skills/qt-qml-review/platforms/amazonq.md \
-   .amazonq/rules/qt-qml-review.md
-```
-
-All rules auto-load on next interaction.
-
-### JetBrains AI Assistant
-
-```bash
-mkdir -p .aiassistant/rules
-cp skills/qt-qml-review/platforms/jetbrains.md \
-   .aiassistant/rules/qt-qml-review.md
-```
-
-Then configure activation in **Settings > Tools > AI Assistant
-> Rules** (JetBrains does not auto-discover rule files).
 
 ## Contributing
 
