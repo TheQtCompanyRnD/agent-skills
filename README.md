@@ -74,11 +74,12 @@ Codex CLI support natively:
 
 ```yaml
 ---
-name: qt-ui
+name: qt-qml-review
 description: >-
-  Designs Qt Quick/QML user interfaces following Qt design
-  guidelines. Use when creating or modifying QML UIs, layouts,
-  styling, or visual components.
+  Reviews QML source files for correctness, performance, and
+  maintainability. Deterministic linting (47+ rules) plus
+  parallel deep-analysis agents for bindings, layout, loaders,
+  delegates, states, and performance.
 license: LicenseRef-Qt-Commercial OR BSD-3-Clause
 compatibility: >-
   Designed for Claude Code, GitHub Copilot, and similar agents.
@@ -128,11 +129,11 @@ platform-specific metadata (Codex `openai.yaml`), create
 variants in a `platforms/` directory:
 
 ```
-skills/qt-build-deploy/
+skills/qt-qml-review/
 ├── SKILL.md                       # Core skill (tool-agnostic)
 ├── references/
-│   ├── cmake-patterns.md
-│   └── cross-compile.md
+│   ├── qml-lint-rules.md
+│   └── qml-review-checklist.md
 ├── platforms/                     # Platform-specific variants
 │   ├── copilot.prompt.md          #   Self-contained Copilot agent
 │   └── windsurf.md                #   Compact version (under 6K chars)
