@@ -1,10 +1,13 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "Official Qt Skills & Tools",
-  "description": "Official agentic engineering skills and tools for Qt software development",
+  "name": "qt-skills-and-tools",
   "owner": {
     "name": "Qt Group",
     "email": "info@qt.io"
+  },
+  "metadata": {
+    "description": "Official agentic engineering skills and tools for Qt software development",
+    "version": "1.0.0"
   },
   "plugins": [
     {
@@ -15,7 +18,10 @@
       "author": {
         "name": "Qt Group"
       },
-      "tags": ["qt", "code-review", "qml", "qt-quick", "development"]
+      "license": "BSD-3-Clause",
+      "repository": "https://codereview.qt-project.org/qtai/qtaiskills",
+      "category": "development",
+      "keywords": ["qt", "code-review", "qml", "qt-quick", "development"]
     }
   ]
 }
