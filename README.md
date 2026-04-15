@@ -62,7 +62,6 @@ skills/                           # All skills live here
   qt-qml/
   qt-qml-docs/
   qt-cpp-docs/
-tooling/                          # Per-tool installation helpers
 CONTRIBUTING.md
 LICENSE
 README.md
