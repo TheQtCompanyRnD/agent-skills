@@ -35,6 +35,7 @@ cross-platform story.
 | `qt-qml` | Conceptual | QML best practices for writing, reviewing, fixing, and refactoring. Corrects systematic LLM pre-training biases around bindings, scoping, modules, JS interop, and types. |
 | `qt-qml-docs` | Process | Generates Markdown reference documentation for QML components and applications from .qml source files. |
 | `qt-cpp-docs` | Process | Generates Markdown reference documentation for Qt/C++ source files — classes, modules, utilities, headers, and entry points. |
+| `qt-qml-profiler` | Tool | Runs `qmlprofiler` on a 2D QML / Qt Quick application, parses the `.qtd` trace, and analyzes hotspots against the source code with frame-time, memory, and pixmap-cache summaries. Does not cover Qt Quick 3D. |
 
 ### Skill types
 
@@ -61,6 +62,7 @@ skills/                           # All skills live here
   qt-qml/
   qt-qml-docs/
   qt-cpp-docs/
+  qt-qml-profiler/
 .claude-plugin/                   # Claude Code CLI & Copilot CLI plugin config
 gemini-extension.json             # Gemini CLI extension manifest
 CONTRIBUTING.md
