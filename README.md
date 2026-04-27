@@ -1,8 +1,8 @@
 # Qt AI Skills
 
-Official agentic engineering skills for Qt software development
+Official agentic skills for Qt software development
 and quality assurance, designed for use with AI coding tools
-such as Claude Code CLI, Codex CLI, Gemini CLI, and
+such as Claude Code, Codex CLI, Gemini CLI, and
 GitHub Copilot.
 
 Skills have been tested with frontier LLMs from the Claude,
@@ -16,7 +16,7 @@ and can be adapted to other platforms through condensed
 variants. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full
 cross-platform story.
 
-> These agentic engineering skills use AI and can make mistakes.
+> These agentic development skills use AI and can make mistakes.
 > Always double-check the output carefully.
 >
 > Before using the skills under Qt commercial licensing, make
