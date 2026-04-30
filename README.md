@@ -48,6 +48,18 @@ cross-platform story.
   Widgets patterns, UI design)
 - **Tool** — guidance on Qt CLI tools and testing solutions
 
+## MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `qt-documentation-mcp` | Hosted MCP server for Qt API documentation lookup across the latest release and active LTS branches. Bundled with the `qt-development-skills` plugin; also available standalone via the official MCP registry as `io.qt/qt-documentation-mcp`. |
+
+### Qt Documentation MCP Tool
+
+See [`mcp/qt-documentation-mcp/README.md`](mcp/qt-documentation-mcp/README.md)
+for endpoint and manual setup instructions for AI clients other than
+Claude Code.
+
 ## Repository Structure
 
 ```
@@ -63,8 +75,13 @@ skills/                           # All skills live here
   qt-qml-docs/
   qt-cpp-docs/
   qt-qml-profiler/
+mcp/                              # MCP servers bundled with the plugin
+  qt-documentation-mcp/           #   Each server is a directory
+    README.md                     #   with its own README
+.mcp.json                         # MCP registration for Claude Code
 .claude-plugin/                   # Claude Code CLI & Copilot CLI plugin config
 gemini-extension.json             # Gemini CLI extension manifest
+docs/                             # Source for the docs site (MkDocs)
 CONTRIBUTING.md
 LICENSE
 README.md

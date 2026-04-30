@@ -12,7 +12,7 @@
   "plugins": [
     {
       "name": "qt-development-skills",
-      "description": "This plug-in contains agentic engineering skills for Qt software development, such as Qt C++/QML code review, QML coding, or Qt C++/QML code documentation skills. The skills have been tested with frontier LLMs from the Claude, Gemini, and GPT LLM families. These agentic development skills use AI and can make mistakes. Always double-check the output carefully.",
+      "description": "This plug-in contains agentic engineering skills for Qt software development, such as Qt C++/QML code review, QML coding, or Qt C++/QML code documentation skills, plus the hosted Qt Documentation MCP server for live Qt API lookups. The skills have been tested with frontier LLMs from the Claude, Gemini, and GPT LLM families. These agentic development skills use AI and can make mistakes. Always double-check the output carefully.",
       "source": "./",
       "version": "1.1.0",
       "author": {
@@ -21,7 +21,7 @@
       "license": "BSD-3-Clause",
       "repository": "https://github.com/TheQtCompanyRnD/agent-skills",
       "category": "development",
-      "keywords": ["qt", "code-review", "qml", "qt-quick", "development"]
+      "keywords": ["qt", "code-review", "qml", "qt-quick", "development", "mcp", "documentation"]
     }
   ]
 }

@@ -15,7 +15,8 @@ Tested with frontier LLMs from the Claude, Gemini, and GPT model
 families. Built on the same brand bones as [doc.qt.io](https://doc.qt.io),
 tuned for the way agents read and write code today.
 
-[Browse skills →](skills/index.md){ .md-button }
+[Browse skills →](skills/index.md){ .md-button } &nbsp;
+[MCP setup →](mcp/index.md){ .md-button }
 
 </div>
 
@@ -28,6 +29,12 @@ tuned for the way agents read and write code today.
 Agentic skills for QML and C++ authoring, review, and
 documentation — packaged so they work natively in Claude Code,
 Codex CLI, and Gemini CLI.
+</a>
+
+<a class="qt-card" href="mcp/">
+<strong>MCP Servers</strong>
+Model Context Protocol servers that give agents first-class
+access to Qt documentation across multiple Qt versions.
 </a>
 
 <a class="qt-card" href="contributing/">

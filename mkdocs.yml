@@ -93,4 +93,8 @@ nav:
       - qt-qml-docs: skills/qt-qml-docs.md
       - qt-qml-profiler: skills/qt-qml-profiler.md
       - qt-qml-review: skills/qt-qml-review.md
+  - MCP Servers:
+      - Overview: mcp/index.md
+      - Setup via plugin: mcp/setup-plugin.md
+      - Manual setup: mcp/setup-manual.md
   - Contributing: contributing.md
