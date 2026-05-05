@@ -1,0 +1,575 @@
+/* ============================================================
+   Qt AI Skills — theme
+   Riffs on doc.qt.io with a 2026 AI-era polish.
+
+   Source palette (extracted from qt-design-system-1.1.0.css):
+     #41cd52  Qt brand green
+     #09102b  Qt deep navy (text + dark surfaces)
+     #21be2a  secondary green
+     #233347  mid-navy
+     #182233  surface-navy (dark mode panels)
+     #0a6aa1  link blue (legacy)
+     #cb0131  Qt red accent
+     #e7f4f9  signature light-blue panel
+     #beebff  signature light-blue accent panel
+     #f6f7f9  off-white surface
+   Fonts: Titillium Web (body), JetBrains Mono (code — modern stand-in
+   for Droid Sans Mono).
+   ============================================================ */
+
+:root {
+  /* Qt brand */
+  --qt-green:        #41cd52;
+  --qt-green-dark:   #21be2a;
+  --qt-green-soft:   #5DD96B;
+  --qt-navy:         #09102b;
+  --qt-navy-mid:     #233347;
+  --qt-navy-soft:    #182233;
+  --qt-red:          #cb0131;
+  --qt-blue-link:    #0a6aa1;
+  --qt-panel:        #e7f4f9;
+  --qt-panel-strong: #beebff;
+  --qt-surface:      #f6f7f9;
+  --qt-rule:         #e6e7e9;
+
+  /* Material primary/accent — Qt green */
+  --md-primary-fg-color:        var(--qt-green);
+  --md-primary-fg-color--light: var(--qt-green-soft);
+  --md-primary-fg-color--dark:  var(--qt-green-dark);
+  --md-accent-fg-color:         var(--qt-green-dark);
+
+  /* Body text in Qt navy — like doc.qt.io */
+  --md-default-fg-color:        var(--qt-navy);
+  --md-default-fg-color--light: #2a3344;
+  --md-typeset-color:           var(--qt-navy);
+
+  /* Links: Qt blue in body, green for nav/brand surfaces */
+  --md-typeset-a-color:         var(--qt-blue-link);
+
+  /* Code accents */
+  --md-code-bg-color:           var(--qt-surface);
+  --md-code-fg-color:           var(--qt-navy);
+
+  /* Header height fix for the glass effect */
+  --md-header--shadow:          0 1px 0 rgba(9, 16, 43, 0.06);
+}
+
+/* ---------- Dark mode ---------- */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color:           var(--qt-navy);
+  --md-default-bg-color--light:    var(--qt-navy-soft);
+  --md-default-bg-color--lighter:  var(--qt-navy-mid);
+  --md-default-bg-color--lightest: #2c3a52;
+
+  --md-default-fg-color:           #e8eef5;
+  --md-default-fg-color--light:    #c9d1de;
+  --md-typeset-color:               #e8eef5;
+
+  --md-typeset-a-color:             var(--qt-green-soft);
+  --md-accent-fg-color:             var(--qt-green-soft);
+
+  --md-code-bg-color:               #0f1a33;
+  --md-code-fg-color:                #d6e4f5;
+}
+
+/* ============================================================
+   Typography — Titillium Web everywhere, like doc.qt.io
+   ============================================================ */
+body, .md-typeset {
+  font-family: "Titillium Web", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-feature-settings: "kern", "liga";
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  font-family: "Titillium Web", sans-serif;
+  font-weight: 300;        /* Qt headings are light-weight */
+  letter-spacing: -0.01em;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h1 {
+  font-weight: 300;
+  font-size: 2.4rem;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  background: linear-gradient(
+    100deg,
+    var(--qt-navy)   0%,
+    var(--qt-navy)  55%,
+    var(--qt-green) 100%
+  );
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1 {
+  background: linear-gradient(
+    100deg,
+    #ffffff 0%,
+    #ffffff 50%,
+    var(--qt-green-soft) 100%
+  );
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+.md-typeset h2 {
+  font-weight: 600;
+  font-size: 1.6rem;
+  border-bottom: 2px solid var(--qt-rule);
+  padding-bottom: 0.3rem;
+  margin-top: 2rem;
+}
+[data-md-color-scheme="slate"] .md-typeset h2 {
+  border-bottom-color: var(--qt-navy-mid);
+}
+
+/* ============================================================
+   Header — Qt-navy glass with green hairline (the AI riff)
+   ============================================================ */
+.md-header {
+  background: linear-gradient(
+    180deg,
+    rgba(9, 16, 43, 0.92) 0%,
+    rgba(9, 16, 43, 0.86) 100%
+  );
+  color: #ffffff;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 1px 0 rgba(65, 205, 82, 0.35),
+              0 8px 24px -12px rgba(9, 16, 43, 0.4);
+}
+
+.md-header__title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.md-tabs {
+  background: var(--qt-navy);
+  color: #ffffff;
+}
+
+.md-tabs__link {
+  opacity: 0.78;
+  transition: opacity 0.2s, color 0.2s;
+}
+.md-tabs__link:hover,
+.md-tabs__link--active {
+  opacity: 1;
+  color: var(--qt-green);
+}
+
+/* ============================================================
+   Links — animated underline (subtle 2026 polish)
+   ============================================================ */
+.md-typeset a {
+  font-weight: 600;
+  text-decoration: none;
+  background-image: linear-gradient(var(--qt-green), var(--qt-green));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px;
+  transition: background-size 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+              color 0.2s;
+  padding-bottom: 1px;
+}
+.md-typeset a:hover {
+  background-size: 100% 1.5px;
+  color: var(--qt-green-dark);
+}
+[data-md-color-scheme="slate"] .md-typeset a:hover {
+  color: var(--qt-green-soft);
+}
+
+/* ============================================================
+   Code — Qt-style with subtle green ring on hover
+   ============================================================ */
+.md-typeset code,
+.md-typeset pre {
+  font-family: "JetBrains Mono", "Droid Sans Mono", "Fira Code",
+               Consolas, monospace;
+  font-feature-settings: "calt", "liga";
+}
+.md-typeset code {
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.88em;
+}
+.md-typeset pre > code {
+  border-radius: 8px;
+  border: 1px solid var(--qt-rule);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.md-typeset pre:hover > code {
+  border-color: rgba(65, 205, 82, 0.45);
+  box-shadow: 0 0 0 4px rgba(65, 205, 82, 0.06);
+}
+[data-md-color-scheme="slate"] .md-typeset pre > code {
+  border-color: var(--qt-navy-mid);
+}
+[data-md-color-scheme="slate"] .md-typeset pre:hover > code {
+  border-color: rgba(65, 205, 82, 0.55);
+  box-shadow: 0 0 0 4px rgba(65, 205, 82, 0.1);
+}
+
+/* ============================================================
+   Tables — green header row, like doc.qt.io
+   ============================================================ */
+.md-typeset table:not([class]) {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--qt-rule);
+}
+.md-typeset table:not([class]) th {
+  background: linear-gradient(
+    180deg,
+    var(--qt-green) 0%,
+    var(--qt-green-dark) 100%
+  );
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+}
+.md-typeset table:not([class]) tr:nth-child(even) td {
+  background: var(--qt-surface);
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ============================================================
+   Admonitions — Qt's signature light-blue panels for info,
+   green for tips, with a soft glow accent
+   ============================================================ */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 8px;
+  border-left: 4px solid var(--qt-green);
+  box-shadow: 0 1px 2px rgba(9, 16, 43, 0.04),
+              0 4px 16px -8px rgba(9, 16, 43, 0.08);
+}
+
+.md-typeset .admonition.note,
+.md-typeset .admonition.info,
+.md-typeset details.note,
+.md-typeset details.info {
+  border-left-color: #0a6aa1;
+  background: var(--qt-panel);
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.note,
+[data-md-color-scheme="slate"] .md-typeset .admonition.info {
+  background: rgba(10, 106, 161, 0.12);
+}
+
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  border-left-color: #f1a74e;
+}
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  border-left-color: var(--qt-red);
+}
+
+/* AI-flavoured callout — use ?> !!! abstract or !!! quote */
+.md-typeset .admonition.abstract,
+.md-typeset details.abstract {
+  border-left: 4px solid transparent;
+  background:
+    linear-gradient(var(--md-default-bg-color), var(--md-default-bg-color)) padding-box,
+    linear-gradient(135deg, var(--qt-green), #00d4ff) border-box;
+  border: 1px solid transparent;
+}
+
+/* ============================================================
+   Hero card — front page only, 2026 mesh-gradient flair
+   Use class .qt-hero on a div in markdown via attr_list
+   ============================================================ */
+.md-typeset .qt-hero {
+  position: relative;
+  padding: 3rem 2.5rem;
+  margin: 1rem 0 2rem;
+  border-radius: 14px;
+  background:
+    radial-gradient(at 20% 20%, rgba(65, 205, 82, 0.18)  0px, transparent 55%),
+    radial-gradient(at 80% 30%, rgba(0, 212, 255, 0.12)  0px, transparent 50%),
+    radial-gradient(at 60% 90%, rgba(203, 1, 49,  0.08)  0px, transparent 50%),
+    var(--qt-navy);
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(65, 205, 82, 0.2) inset,
+              0 20px 60px -20px rgba(9, 16, 43, 0.4);
+}
+.md-typeset .qt-hero h1,
+.md-typeset .qt-hero h2 {
+  color: #ffffff;
+  background: none;
+  -webkit-text-fill-color: #ffffff;
+  margin-top: 0;
+}
+.md-typeset .qt-hero h1 {
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+.md-typeset .qt-hero p {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  max-width: 56ch;
+}
+.md-typeset .qt-hero a {
+  color: var(--qt-green-soft);
+  background-image: linear-gradient(var(--qt-green-soft), var(--qt-green-soft));
+}
+
+/* Subtle animated grain to the hero — pure CSS, no JS */
+.md-typeset .qt-hero::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background:
+    conic-gradient(from 90deg at 50% 50%,
+      rgba(65, 205, 82, 0)   0deg,
+      rgba(65, 205, 82, 0.08) 90deg,
+      rgba(65, 205, 82, 0)   180deg,
+      rgba(0, 212, 255, 0.06) 270deg,
+      rgba(65, 205, 82, 0)   360deg);
+  animation: qtSpin 24s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+.md-typeset .qt-hero > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes qtSpin {
+  to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .qt-hero::after { animation: none; }
+}
+
+/* ============================================================
+   Skill / feature cards — used on the Skills overview
+   ============================================================ */
+.md-typeset .qt-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.md-typeset .qt-card {
+  display: block;
+  padding: 1.25rem 1.4rem;
+  border-radius: 10px;
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--qt-rule);
+  text-decoration: none !important;
+  color: var(--md-default-fg-color);
+  background-image: none !important;
+  transition: transform 0.25s cubic-bezier(0.19, 1, 0.22, 1),
+              border-color 0.25s, box-shadow 0.25s;
+}
+.md-typeset .qt-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--qt-green);
+  box-shadow: 0 1px 0 rgba(65, 205, 82, 0.15) inset,
+              0 12px 30px -16px rgba(9, 16, 43, 0.3),
+              0 0 0 4px rgba(65, 205, 82, 0.08);
+}
+[data-md-color-scheme="slate"] .md-typeset .qt-card {
+  border-color: var(--qt-navy-mid);
+}
+.md-typeset .qt-card strong {
+  display: block;
+  color: var(--qt-green-dark);
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+[data-md-color-scheme="slate"] .md-typeset .qt-card strong {
+  color: var(--qt-green-soft);
+}
+
+/* ============================================================
+   Misc polish
+   ============================================================ */
+.md-typeset hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--qt-rule) 20%,
+    var(--qt-rule) 80%,
+    transparent 100%);
+}
+
+.md-footer {
+  background: var(--qt-navy);
+}
+.md-footer-meta {
+  background: #050a1c;
+}
+
+/* Search box — subtle green focus ring */
+.md-search__form {
+  border-radius: 6px;
+  transition: box-shadow 0.25s;
+}
+.md-search__form:focus-within {
+  box-shadow: 0 0 0 3px rgba(65, 205, 82, 0.35);
+}
+
+/* === doc.qt.io chrome bridge ===
+   The qt-design-system header (b-header) is injected via overrides/.
+   doc.qt.io's online.css applies many global rules; neutralise the ones
+   that fight Material so only the header styling carries through. */
+
+/* Pin the qt header above Material's, full width */
+.qds-page-header {
+  position: relative;
+  z-index: 5;
+}
+
+/* online.css sets body/html backgrounds and font; restore Material defaults */
+body.qt-design-system,
+body {
+  background: var(--md-default-bg-color) !important;
+  font-family: var(--md-text-font-family, "Titillium Web", sans-serif) !important;
+}
+
+/* online.css forces .container/.content widths that break Material's grid */
+.md-main .container,
+.md-content .container {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Push Material's header below the qt brand bar */
+.md-header {
+  top: 0;
+  position: sticky;
+}
+
+/* === dark-mode bridge for qt brand chrome ===
+   Material's dark mode toggles [data-md-color-scheme="slate"] on <html>.
+   qt-design-system header/footer use their own theme system; mirror it. */
+
+[data-md-color-scheme="slate"] .qds-page-header,
+[data-md-color-scheme="slate"] .b-header,
+[data-md-color-scheme="slate"] #footer,
+[data-md-color-scheme="slate"] .l-footer {
+  background-color: #1a1a1a !important;
+  color: var(--md-default-fg-color) !important;
+}
+
+[data-md-color-scheme="slate"] .b-header a,
+[data-md-color-scheme="slate"] .b-header .c-link,
+[data-md-color-scheme="slate"] #footer a,
+[data-md-color-scheme="slate"] .l-footer a,
+[data-md-color-scheme="slate"] .c-footer-secondary-navigation,
+[data-md-color-scheme="slate"] .c-footer-secondary-navigation__group-notice {
+  color: var(--md-default-fg-color) !important;
+}
+
+/* Logos: doc.qt.io's PNGs are designed for white bg.
+   Invert them in dark mode so they read on dark chrome. */
+[data-md-color-scheme="slate"] .b-header__logo img,
+[data-md-color-scheme="slate"] .c-logo-footer img {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Download Qt button: keep brand green visible */
+[data-md-color-scheme="slate"] .b-header .c-button,
+[data-md-color-scheme="slate"] .l-footer .c-btn {
+  background-color: #41cd52 !important;
+  color: #000 !important;
+  border-color: #41cd52 !important;
+}
+
+/* Kill the bright divider line between qt header and Material header in dark mode */
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+[data-md-color-scheme="slate"] .qds-page-header,
+[data-md-color-scheme="slate"] .b-header {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Links inside admonitions in slate need a darker green to remain readable
+   on the few admonition variants that keep light backgrounds. */
+[data-md-color-scheme="slate"] .md-typeset .admonition.warning a,
+[data-md-color-scheme="slate"] .md-typeset .admonition.note a,
+[data-md-color-scheme="slate"] .md-typeset .admonition.important a {
+  color: #006400;
+}
+
+/* online2.css / qt-design-system set body color rules that bleed into
+   Material's content area, leaving black-on-dark in slate mode. Force
+   Material's content typography to use its own scheme tokens. */
+[data-md-color-scheme="slate"] .md-content,
+[data-md-color-scheme="slate"] .md-typeset,
+[data-md-color-scheme="slate"] .md-typeset p,
+[data-md-color-scheme="slate"] .md-typeset li,
+[data-md-color-scheme="slate"] .md-typeset td,
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3,
+[data-md-color-scheme="slate"] .md-typeset h4,
+[data-md-color-scheme="slate"] .md-typeset h5,
+[data-md-color-scheme="slate"] .md-typeset h6 {
+  color: var(--md-default-fg-color) !important;
+}
+[data-md-color-scheme="slate"] .md-nav,
+[data-md-color-scheme="slate"] .md-nav__link,
+[data-md-color-scheme="slate"] .md-nav__title {
+  color: var(--md-default-fg-color) !important;
+}
+
+/* online2.css forces light backgrounds on warning/note/important admonitions
+   even in slate mode. Force their inner text dark only for those variants;
+   other types (abstract/info/tip/example/quote) keep Material's slate text. */
+[data-md-color-scheme="slate"] .md-typeset .admonition.warning,
+[data-md-color-scheme="slate"] .md-typeset .admonition.note,
+[data-md-color-scheme="slate"] .md-typeset .admonition.important {
+  color: #1a1a1a !important;
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.warning p,
+[data-md-color-scheme="slate"] .md-typeset .admonition.warning li,
+[data-md-color-scheme="slate"] .md-typeset .admonition.note p,
+[data-md-color-scheme="slate"] .md-typeset .admonition.note li,
+[data-md-color-scheme="slate"] .md-typeset .admonition.important p,
+[data-md-color-scheme="slate"] .md-typeset .admonition.important li {
+  color: #1a1a1a !important;
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.warning > .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset .admonition.note > .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset .admonition.important > .admonition-title {
+  color: #1a1a1a !important;
+}
+
+/* online2.css adds a grey border/background to <pre> that fights Material's
+   own code block styling. Reset to let Material handle code blocks. */
+.md-typeset pre,
+.md-typeset pre > code {
+  background: var(--md-code-bg-color) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.md-typeset .highlight pre {
+  background: transparent !important;
+}
+.md-typeset code {
+  border: 0 !important;
+}

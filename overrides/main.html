@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <link rel="stylesheet" href="https://www.qt.io/hubfs/qt-design-system/qt-design-system-1.1.0.css">
+  <link rel="stylesheet" href="https://doc.qt.io/style/online2.css">
+  <script src="https://doc.qt.io/scripts/qt-design-system-1.1.0-doc.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.classList.add('qt-design-system');
+    });
+  </script>
+{% endblock %}
+
+{% block header %}
+  {% include "partials/qt-header.html" %}
+  {{ super() }}
+{% endblock %}
+
+{% block footer %}
+  {% include "partials/qt-footer.html" %}
+{% endblock %}

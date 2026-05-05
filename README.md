@@ -222,6 +222,48 @@ Or import skills into your project's context file:
 echo '@skills/qt-qml-review/SKILL.md' >> GEMINI.md
 ```
 
+## Documentation site
+
+A browsable documentation site is built from the `docs/` directory
+using [MkDocs Material](https://squidfunk.github.io/mkdocs-material/)
+and published at:
+
+> **<https://doc.qt.io/agentictools/>**
+
+The canonical repo is on Gerrit
+(`codereview.qt-project.org/qtai/qtaiskills`); doc.qt.io builds are
+driven by the `qtaiskills` Rundeck job in `tqtc-doctools` on each
+push to the publishing branch.
+
+### Local preview
+
+Requires Python 3.12+:
+
+```bash
+pip install -r requirements-docs.txt
+mkdocs serve
+```
+
+Then open <http://127.0.0.1:8000/agent-skills/> — the dev server
+live-reloads on every save.
+
+### Production build
+
+```bash
+mkdocs build --strict
+```
+
+Output goes to `site/`. `--strict` fails on broken links and
+malformed nav, matching the GitHub Actions check.
+
+### Adding a new skill page
+
+1. Create `docs/skills/<skill-name>.md` (use an existing skill page
+   as a template).
+2. Add it to `nav:` in `mkdocs.yml`.
+3. Add a row to the table in `docs/skills/index.md`.
+4. Run `mkdocs serve` to verify.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines

@@ -1,0 +1,96 @@
+site_name: Qt AI Skills
+site_description: Official agentic skills and MCP servers for Qt software development.
+site_url: https://doc.qt.io/agentictools/
+repo_url: https://github.com/TheQtCompanyRnD/agent-skills
+repo_name: TheQtCompanyRnD/agent-skills
+edit_uri: edit/dev/docs/
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - content.action.edit
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  font:
+    text: Titillium Web
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Auto-follow system preference
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+plugins:
+  - search
+  - gen-files:
+      scripts:
+        - gen_skills.py
+
+extra_css:
+  - stylesheets/qt-brand.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/TheQtCompanyRnD/agent-skills
+    - icon: fontawesome/brands/x-twitter
+      link: https://twitter.com/qtproject
+    - icon: fontawesome/solid/globe
+      link: https://www.qt.io
+
+copyright: >
+  Copyright &copy; The Qt Company Ltd. and contributors.
+  Qt and the Qt logo are trademarks of The Qt Company Ltd.
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+  - tables
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Skills:
+      - Overview: skills/index.md
+      - qt-cpp-docs: skills/qt-cpp-docs.md
+      - qt-cpp-review: skills/qt-cpp-review.md
+      - qt-qml: skills/qt-qml.md
+      - qt-qml-docs: skills/qt-qml-docs.md
+      - qt-qml-profiler: skills/qt-qml-profiler.md
+      - qt-qml-review: skills/qt-qml-review.md
+  - Contributing: contributing.md
