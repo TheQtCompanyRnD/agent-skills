@@ -7,7 +7,7 @@ plugin install gives you both.
 ## Install
 
 Follow the plugin install instructions in the project
-[README](https://github.com/TheQtCompanyRnD/agent-skills) for your AI tool of choice.
+[README](https://github.com/TheQtCompanyRnD/agent-skills#installation) for your AI tool of choice.
 Once the plugin is installed, the MCP server is registered
 automatically — no extra `claude mcp add` step is required.
 

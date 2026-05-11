@@ -6,21 +6,21 @@ hide:
 
 <div class="qt-hero" markdown>
 
-# Qt AI Skills
+# Qt Agentic Tools
 
 Official agentic skills and MCP servers for Qt software
 development — designed for AI coding tools in 2026 and beyond.
 
 Tested with frontier LLMs from the Claude, Gemini, and GPT model
 families. Built on the same brand bones as [doc.qt.io](https://doc.qt.io),
-tuned for the way agents read and write code today.
+tuned for the way agents read and write code.
 
 [Browse skills →](skills/index.md){ .md-button } &nbsp;
-[MCP setup →](mcp/index.md){ .md-button }
+[MCP tools →](mcp/index.md){ .md-button }
 
 </div>
 
-## What's here { #whats-here }
+## What's Here { #whats-here }
 
 <div class="qt-cards">
 
@@ -32,7 +32,7 @@ Codex CLI, and Gemini CLI.
 </a>
 
 <a class="qt-card" href="mcp/">
-<strong>MCP Servers</strong>
+<strong>MCP Tools</strong>
 Model Context Protocol servers that give agents first-class
 access to Qt documentation across multiple Qt versions.
 </a>
@@ -46,7 +46,7 @@ publishing a new skill or MCP server in this repo.
 </div>
 
 !!! warning "AI output requires review"
-    These agentic development skills use AI and can make mistakes.
+    These tools and skills depend on LLMs, which can make mistakes.
     Always double-check the output carefully.
 
     Before using the skills under Qt commercial licensing, make sure

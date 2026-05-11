@@ -1,7 +1,7 @@
 # Manual client setup
 
 Direct configuration for clients that aren't using the
-`qt-development-skills` plugin. The endpoint in every case is:
+`qt-development-skills` claude plugin. The endpoint in every case is:
 
 ```
 https://qt-docs-mcp.qt.io/mcp
@@ -9,7 +9,7 @@ https://qt-docs-mcp.qt.io/mcp
 
 ## Claude Code
 
-Register the server globally once:
+Register the server globally once by entering this in your terminal:
 
 ```shell
 claude mcp add --transport http qt-docs https://qt-docs-mcp.qt.io/mcp
@@ -19,9 +19,9 @@ The server is then available in any Claude Code session.
 
 ## Claude Desktop
 
-Claude Desktop only supports stdio transports and cannot connect to
-HTTP MCP servers directly. Use `mcp-remote` as a bridge (requires
-Node.js).
+!!! abstract "Use `mcp-remote` as a bridge (requires Node.js)"
+    Claude Desktop only supports stdio transports and cannot connect to
+    HTTP MCP servers directly. Use `mcp-remote` as a bridge (requires Node.js).
 
 Open `claude_desktop_config.json`:
 
@@ -44,8 +44,16 @@ to install `mcp-remote` — confirm to proceed.
 
 ## OpenAI Codex
 
-Via the UI: **Settings → MCP server → Add Server** → select
-**Streamable HTTP** → paste the URL. Give it a name and save.
+1. Go to: **Settings → MCP server → Add Server**.
+2. Select **Streamable HTTP**.
+3. Paste the URL:
+
+```
+https://qt-docs-mcp.qt.io/mcp
+```
+4. Give it a name and save.
+
+![Codex MCP server setup dialog](../images/codex-mcp-setup.webp)
 
 ## Google Antigravity
 

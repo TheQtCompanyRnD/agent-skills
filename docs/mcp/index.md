@@ -1,8 +1,12 @@
-# MCP Servers
+# MCP Tools
 
 Model Context Protocol servers for Qt-aware AI tooling.
 
-## qt-documentation-mcp
+## Services
+
+These are hosted by The Qt Company and don't require you to install a local binary.
+
+### Qt Documentation
 
 A Qt-hosted MCP documentation server. The goal is to reduce the time
 agents spend researching context for a Qt development task or user
@@ -13,19 +17,19 @@ documentation loaded — no local build required.
 
 **Endpoint:** `https://qt-docs-mcp.qt.io/mcp`
 
-## Setup
+#### Setup
 
 Two ways to wire it up:
 
 - **[Via the qt-development-skills plugin](setup-plugin.md)** — easiest
   if you're already using the Claude Code plugin from this repo.
 - **[Manual client setup](setup-manual.md)** — direct configuration for
-  Claude Code, Claude Desktop, Cursor, OpenAI Codex, or Google
+  Claude Code, Claude Desktop, OpenAI Codex, or Google
   Antigravity.
 
-## Available tools
+#### Available tools
 
-### `qt_documentation_search`
+##### `qt_documentation_search`
 
 Search Qt documentation with optional filters.
 
@@ -51,7 +55,7 @@ Search Qt documentation with optional filters.
 {"query": "animation", "filter": "qml"}
 ```
 
-### `qt_documentation_read`
+##### `qt_documentation_read`
 
 Read the full content of a specific documentation page.
 
@@ -59,3 +63,7 @@ Read the full content of a specific documentation page.
 |---|---|---|---|
 | `file` | string | Yes | Filename from search results (e.g., `qobject.html`) |
 | `version` | string | No | Qt version to read from. Defaults to latest |
+
+## Local Servers
+
+Nothing to see yet, stay tuned!
