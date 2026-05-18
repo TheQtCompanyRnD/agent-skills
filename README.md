@@ -36,6 +36,8 @@ for the full cross-platform story.
 | `qt-qml-docs` | Process | Generates Markdown reference documentation for QML components and applications from .qml source files. |
 | `qt-cpp-docs` | Process | Generates Markdown reference documentation for Qt/C++ source files — classes, modules, utilities, headers, and entry points. |
 | `qt-qml-profiler` | Tool | Runs `qmlprofiler` on a 2D QML / Qt Quick application, parses the `.qtd` trace, and analyzes hotspots against the source code with frame-time, memory, and pixmap-cache summaries. Does not cover Qt Quick 3D. |
+| `qt-qml-test` | Process | Generates Qt Quick Test cases (`tst_*.qml`) for QML components using `TestCase`, `SignalSpy`, and `tryCompare`. Handles single files and batches. Does not cover CMake or runner setup. |
+| `qt-qml-test-run` | Tool | Builds and runs Qt Quick Test (`qmltestrunner`) tests for a CMake project, parses the JUnit XML, and writes a Markdown report. Opt-in CMake test-infrastructure wiring with `--wire-up`. Companion to `qt-qml-test`. |
 
 ### Skill types
 
@@ -75,6 +77,8 @@ skills/                           # All skills live here
   qt-qml-docs/
   qt-cpp-docs/
   qt-qml-profiler/
+  qt-qml-test/
+  qt-qml-test-run/
 mcp/                              # MCP servers bundled with the plugin
   qt-documentation-mcp/           #   Each server is a directory
     README.md                     #   with its own README
