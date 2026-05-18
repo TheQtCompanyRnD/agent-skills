@@ -101,4 +101,4 @@ Per-client troubleshooting lives in
 
 - [How skills are triggered and what they look like inside](skills/concepts.md)
 - [What MCP is and why our server exists](mcp/index.md)
-- [Contributing a new skill](contributing.md)
+- [Contributing a new skill](https://codereview.qt-project.org/plugins/gitiles/qtai/qtaiskills/+/refs/heads/dev/CONTRIBUTING.md)

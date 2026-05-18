@@ -101,4 +101,3 @@ nav:
       - Setup via plugin: mcp/setup-plugin.md
       - Manual setup: mcp/setup-manual.md
       - Verifying: mcp/verifying.md
-  - Contributing: contributing.md

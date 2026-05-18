@@ -538,33 +538,52 @@ code. Good things to test:
 
 If you have access to multiple AI tools, testing across them is
 valuable but not required. Note which tools you tested with in
-your pull request description.
+your commit message.
 
 
 ## Submitting your contribution
 
-1. **Fork and branch.** Create a branch with a descriptive name:
+This repository is hosted on Gerrit at
+[codereview.qt-project.org](https://codereview.qt-project.org/q/project:qtai/qtaiskills).
+Changes are submitted as Gerrit reviews.
+
+1. **Clone from Gerrit and install the `commit-msg` hook.** The
+   hook adds a `Change-Id` trailer that Gerrit uses to track your
+   change across patch sets.
+
+   ```bash
+   git clone "https://codereview.qt-project.org/qtai/qtaiskills"
+   scp -p -P 29418 <your-user>@codereview.qt-project.org:hooks/commit-msg .git/hooks/
+   ```
+
+2. **Create a branch with a descriptive name:**
    `add-qt-testing-skill` or `improve-qml-review-checklist`.
 
-2. **One skill per pull request.** This makes review faster and
-   keeps the git history useful. If you are updating an existing
-   skill and adding a new one, use separate PRs.
+3. **One skill per change.** This makes review faster and keeps
+   the git history useful. If you are updating an existing skill
+   and adding a new one, push them as separate changes.
 
-3. **Write a clear PR description.** Explain:
+4. **Write a clear commit message.** Explain:
    - What the skill does and why it is useful
    - Which platforms you tested on
    - Any design decisions you want reviewers to know about
 
-4. **Be patient with review.** Skill quality matters because
+5. **Push for review:**
+
+   ```bash
+   git push origin HEAD:refs/for/dev
+   ```
+
+6. **Be patient with review.** Skill quality matters because
    these instructions directly shape what the AI produces.
    Reviewers may ask you to restructure, condense, or reword
-   sections. This is normal and means your work is being taken
-   seriously.
+   sections. Address feedback by amending the commit (preserving
+   the `Change-Id`) and pushing again to update the same change.
 
 ### Contributor License Agreement
 
-By opening a pull request against this repository you agree that
-your contribution is covered by the
+By submitting a change to this repository via Gerrit you agree
+that your contribution is covered by the
 [Qt Contribution License Agreement](https://www.qt.io/community/legal-contribution-agreement-qt).
 This is the same CLA that applies to contributions to the upstream
 Qt Project. If you are contributing on behalf of your employer,
@@ -573,8 +592,8 @@ make sure you have the right to do so.
 
 ## Skill checklist
 
-Use this checklist before opening your pull request. Not every
-item applies to every skill -- use your judgment.
+Use this checklist before pushing your change for review. Not
+every item applies to every skill -- use your judgment.
 
 ### Required
 
