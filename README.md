@@ -41,6 +41,7 @@ for the full cross-platform story.
 | `qt-qml-test-run` | Tool | Builds and runs Qt Quick Test (`qmltestrunner`) tests for a CMake project, parses the JUnit XML, and writes a Markdown report. Opt-in CMake test-infrastructure wiring with `--wire-up`. Companion to `qt-qml-test`. |
 | `qt-figma-token-extraction` | Process | Extracts design tokens, text styles, and variables from a Figma design system and produces a design-tokens.json plus ready-to-use QML singletons. |
 | `qt-figma-component-generation` | Process | Extracts component metadata from a Figma design system and generates production-ready QML controls mapped to Qt Quick Controls 2 patterns. Requires tokens from `qt-figma-token-extraction`. |
+| `qt-project` | Conceptual | Sets up and manages Qt 6 projects built with CMake — fresh projects, executables, libraries, QML modules, plugins, folder layout, and static resources. Corrects systematic LLM biases around qmake-isms and the legacy `qt5_*` macros. |
 
 ### Skill types
 
@@ -83,6 +84,7 @@ skills/                           # All skills live here
   qt-qml-profiler/
   qt-qml-test/
   qt-qml-test-run/
+  qt-project/
 mcp/                              # MCP servers bundled with the plugin
   qt-documentation-mcp/           #   Each server is a directory
     README.md                     #   with its own README
