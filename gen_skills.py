@@ -1,16 +1,18 @@
 # Copyright (C) 2026 The Qt Company Ltd.
 # SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 
-"""Generate one MkDocs page per SKILL.md.
+"""Generate one MkDocs page per SKILL.md, plus the section nav.
 
 Walks ``skills/<name>/SKILL.md``, strips the YAML frontmatter, rewrites
 relative file links (e.g. ``references/foo.md``) to absolute GitHub URLs
 so they resolve on the rendered site without copying the references
 folders, and emits ``skills/<name>.md`` virtually via mkdocs-gen-files.
 
-Also emits ``skills/index.md`` — a generated overview table — from the
-same SKILL.md frontmatter, so the skills list never drifts out of sync
-with the actual skills present in the repo.
+Also emits ``skills/index.md`` — a generated overview table — and
+``skills/SUMMARY.md`` — a literate-nav file consumed by the
+mkdocs-literate-nav plugin to build the Skills section of the site
+navigation. Both pages and nav are driven from the same SKILL.md
+frontmatter, so adding or removing a skill needs no docs-side changes.
 
 The repo's SKILL.md files are the single source of truth — the docs
 site stays in sync automatically and nothing is duplicated under docs/.
@@ -123,3 +125,15 @@ for skill_dir in sorted(SKILLS_ROOT.iterdir()):
 
 with mkdocs_gen_files.open("skills/index.md", "w") as fh:
     fh.write(render_index(index_entries))
+
+# Literate-nav file for the Skills section.
+# "Overview" is the index; each skill page is listed in the same order
+# gen_skills emitted it (alphabetical, matching SKILLS_ROOT iteration).
+summary_lines = ["* [Overview](index.md)"]
+if (Path("docs/skills/concepts.md")).exists():
+    summary_lines.append("* [Concepts & triggers](concepts.md)")
+summary_lines.extend(
+    f"* [{name}]({name}.md)" for name, _ in index_entries
+)
+with mkdocs_gen_files.open("skills/SUMMARY.md", "w") as fh:
+    fh.write("\n".join(summary_lines) + "\n")

@@ -51,6 +51,8 @@ plugins:
   - gen-files:
       scripts:
         - gen_skills.py
+  - literate-nav:
+      nav_file: SUMMARY.md
 
 extra_css:
   - stylesheets/qt-brand.css
@@ -86,15 +88,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting started: getting-started.md
-  - Skills:
-      - Overview: skills/index.md
-      - Concepts & triggers: skills/concepts.md
-      - qt-cpp-docs: skills/qt-cpp-docs.md
-      - qt-cpp-review: skills/qt-cpp-review.md
-      - qt-qml: skills/qt-qml.md
-      - qt-qml-docs: skills/qt-qml-docs.md
-      - qt-qml-profiler: skills/qt-qml-profiler.md
-      - qt-qml-review: skills/qt-qml-review.md
+  - Skills: skills/
   - MCP Tools:
       - Overview: mcp/index.md
       - Tool reference: mcp/tool-reference.md
