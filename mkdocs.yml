@@ -3,7 +3,7 @@ site_description: Official agentic skills and MCP servers for Qt software develo
 site_url: https://doc.qt.io/agentictools/
 repo_url: https://github.com/TheQtCompanyRnD/agent-skills
 repo_name: TheQtCompanyRnD/agent-skills
-edit_uri: edit/dev/docs/
+edit_uri: edit/main/docs/
 
 theme:
   name: material
