@@ -159,6 +159,7 @@ body, .md-typeset {
 .md-tabs__link {
   opacity: 0.78;
   transition: opacity 0.2s, color 0.2s;
+  font-size: 0.8rem;
 }
 .md-tabs__link:hover,
 .md-tabs__link--active {
@@ -226,6 +227,11 @@ body, .md-typeset {
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid var(--qt-rule);
+  font-size: 0.85rem;
+}
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  padding: 0.7em 1em;
 }
 .md-typeset table:not([class]) th {
   background: linear-gradient(
@@ -320,12 +326,47 @@ body, .md-typeset {
 }
 .md-typeset .qt-hero p {
   font-size: 1.1rem;
-  opacity: 0.85;
-  max-width: 56ch;
+  opacity: 0.9;
+  max-width: 72ch;
 }
-.md-typeset .qt-hero a {
+
+/* Body links inside hero — green, animated underline.
+   Buttons are excluded so they keep their own contrast story. */
+.md-typeset .qt-hero a:not(.md-button) {
   color: var(--qt-green-soft);
   background-image: linear-gradient(var(--qt-green-soft), var(--qt-green-soft));
+}
+
+/* Hero buttons: explicit colours so .qt-hero a doesn't drag them
+   into low-contrast territory. */
+.md-typeset .qt-hero .md-button {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.6);
+  background-image: none;
+  margin-top: 1.75rem;
+}
+/* Lift only the first button; wrapped siblings stay flush so the
+   row doesn't stack with 1.75rem gaps when it breaks on narrow
+   viewports. */
+.md-typeset .qt-hero .md-button + .md-button {
+  margin-top: 0;
+}
+.md-typeset .qt-hero .md-button:hover,
+.md-typeset .qt-hero .md-button:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--qt-green);
+  color: #ffffff;
+}
+.md-typeset .qt-hero .md-button--primary {
+  color: var(--qt-navy);
+  background-color: var(--qt-green);
+  border-color: var(--qt-green);
+}
+.md-typeset .qt-hero .md-button--primary:hover,
+.md-typeset .qt-hero .md-button--primary:focus {
+  background-color: var(--qt-green-soft);
+  border-color: var(--qt-green-soft);
+  color: var(--qt-navy);
 }
 
 /* Subtle animated grain to the hero — pure CSS, no JS */
@@ -363,7 +404,7 @@ body, .md-typeset {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1rem;
-  margin: 1.25rem 0;
+  margin: 2.5rem 0 1.25rem;
 }
 .md-typeset .qt-card {
   display: block;
@@ -380,9 +421,16 @@ body, .md-typeset {
 .md-typeset .qt-card:hover {
   transform: translateY(-2px);
   border-color: var(--qt-green);
+  color: var(--md-default-fg-color);
   box-shadow: 0 1px 0 rgba(65, 205, 82, 0.15) inset,
               0 12px 30px -16px rgba(9, 16, 43, 0.3),
               0 0 0 4px rgba(65, 205, 82, 0.08);
+}
+.md-typeset .qt-card:hover strong {
+  color: var(--qt-green-dark);
+}
+[data-md-color-scheme="slate"] .md-typeset .qt-card:hover strong {
+  color: var(--qt-green-soft);
 }
 [data-md-color-scheme="slate"] .md-typeset .qt-card {
   border-color: var(--qt-navy-mid);
@@ -395,6 +443,51 @@ body, .md-typeset {
 }
 [data-md-color-scheme="slate"] .md-typeset .qt-card strong {
   color: var(--qt-green-soft);
+}
+
+/* ============================================================
+   Heading :target highlight — softer flash, quicker fade
+   Material's default uses the full primary green which reads as
+   over-bright when you click an anchor. Tint with a low-alpha
+   green band and cut the animation duration.
+   ============================================================ */
+/* online2.css from doc.qt.io applies `animation: highlighter 3s`
+   to every :target, which holds the highlight at full intensity
+   for 1.5s before fading. !important wins the cascade against
+   that external stylesheet. */
+.md-typeset :target,
+:target {
+  --md-scroll-offset: 0.4rem;
+  animation: qtTargetFlash 0.45s cubic-bezier(0, 0, 0.2, 1) !important;
+  scroll-margin-top: 4rem;
+}
+@keyframes qtTargetFlash {
+  0%   { background-color: rgba(65, 205, 82, 0.22); }
+  100% { background-color: transparent; }
+}
+[data-md-color-scheme="slate"] .md-typeset :target,
+[data-md-color-scheme="slate"] :target {
+  animation-name: qtTargetFlashDark;
+}
+@keyframes qtTargetFlashDark {
+  0%   { background-color: rgba(93, 217, 107, 0.18); }
+  100% { background-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset :target,
+  :target { animation: none !important; }
+}
+
+/* ============================================================
+   Content width — let the grid breathe on wide displays.
+   Material's default .md-grid caps at 61rem (~976px) which
+   leaves big empty gutters on 1080p+ monitors. Bump to ~88rem
+   so we use more of the viewport without ever exceeding a
+   readable line length (the typeset prose stays within
+   .md-typeset's own constraint).
+   ============================================================ */
+.md-grid {
+  max-width: 88rem;
 }
 
 /* ============================================================
@@ -573,3 +666,65 @@ body {
 .md-typeset code {
   border: 0 !important;
 }
+
+/* ============================================================
+   Typography pass — bump sizes for readability and align prose
+   width with doc.qt.io conventions.
+
+   Reference: doc.qt.io renders body text at ~16px Titillium Web
+   inside an ~780px content column, giving roughly 70-78 chars
+   per line. We target ~67ch which lands near 60rem at this
+   font size — comfortable line length for technical prose.
+   ============================================================ */
+.md-typeset {
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.md-typeset > h1,
+.md-typeset > h2,
+.md-typeset > h3,
+.md-typeset > h4,
+.md-typeset > h5,
+.md-typeset > h6,
+.md-typeset > p,
+.md-typeset > ul,
+.md-typeset > ol,
+.md-typeset > blockquote,
+.md-typeset > .admonition,
+.md-typeset > details,
+.md-typeset > table,
+.md-typeset > .highlight,
+.md-typeset > pre {
+  max-width: 60rem;
+}
+
+/* Sidebar navigation — Material default at 0.7rem is too small on
+   a 16px-baseline site. (.md-tabs__link is sized with its main
+   block above so the next tweak only has one location to touch.) */
+.md-nav__link {
+  font-size: 0.78rem;
+}
+.md-nav__title {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Admonitions — bump base body and emphasise the two callouts
+   that act as page-level intros (homepage warning, skill-page
+   "When to use" abstract). */
+.md-typeset .admonition,
+.md-typeset details {
+  font-size: 0.88rem;
+}
+.md-typeset .admonition.warning,
+.md-typeset .admonition.abstract,
+.md-typeset details.warning,
+.md-typeset details.abstract {
+  font-size: 1rem;
+}
+.md-typeset .admonition.warning > .admonition-title,
+.md-typeset .admonition.abstract > .admonition-title {
+  font-size: 1.05rem;
+}
+
