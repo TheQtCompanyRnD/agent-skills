@@ -33,6 +33,7 @@ for the full cross-platform story.
 | `qt-cpp-review` | Review | Deterministic linting + 6 parallel deep-analysis agents for Qt C++ code. Covers model rule compliance, memory ownership, thread safety, correctness, error handling, and performance. |
 | `qt-qml-review` | Review | Deterministic QML linting (47+ rules) + parallel deep-analysis agents for bindings, layout, loaders, delegates, states, and performance. |
 | `qt-qml` | Conceptual | QML best practices for writing, reviewing, fixing, and refactoring. Corrects systematic LLM pre-training biases around bindings, scoping, modules, JS interop, and types. |
+| `qt-ui-design` | Conceptual | UI design and audit for Qt/QML, web, and embedded (MPU/MCU) targets. Covers screen layout, navigation, and UX review with platform-aware defaults for geometry, viewing distance, input, and locale. |
 | `qt-qml-docs` | Process | Generates Markdown reference documentation for QML components and applications from .qml source files. |
 | `qt-cpp-docs` | Process | Generates Markdown reference documentation for Qt/C++ source files — classes, modules, utilities, headers, and entry points. |
 | `qt-qml-profiler` | Tool | Runs `qmlprofiler` on a 2D QML / Qt Quick application, parses the `.qtd` trace, and analyzes hotspots against the source code with frame-time, memory, and pixmap-cache summaries. Does not cover Qt Quick 3D. |
@@ -74,6 +75,7 @@ skills/                           # All skills live here
     platforms/                    #   Platform-specific variants
   qt-qml-review/
   qt-qml/
+  qt-ui-design/
   qt-qml-docs/
   qt-cpp-docs/
   qt-qml-profiler/
