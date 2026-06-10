@@ -39,6 +39,8 @@ for the full cross-platform story.
 | `qt-qml-profiler` | Tool | Runs `qmlprofiler` on a 2D QML / Qt Quick application, parses the `.qtd` trace, and analyzes hotspots against the source code with frame-time, memory, and pixmap-cache summaries. Does not cover Qt Quick 3D. |
 | `qt-qml-test` | Process | Generates Qt Quick Test cases (`tst_*.qml`) for QML components using `TestCase`, `SignalSpy`, and `tryCompare`. Handles single files and batches. Does not cover CMake or runner setup. |
 | `qt-qml-test-run` | Tool | Builds and runs Qt Quick Test (`qmltestrunner`) tests for a CMake project, parses the JUnit XML, and writes a Markdown report. Opt-in CMake test-infrastructure wiring with `--wire-up`. Companion to `qt-qml-test`. |
+| `qt-figma-token-extraction` | Process | Extracts design tokens, text styles, and variables from a Figma design system and produces a design-tokens.json plus ready-to-use QML singletons. |
+| `qt-figma-component-generation` | Process | Extracts component metadata from a Figma design system and generates production-ready QML controls mapped to Qt Quick Controls 2 patterns. Requires tokens from `qt-figma-token-extraction`. |
 
 ### Skill types
 
