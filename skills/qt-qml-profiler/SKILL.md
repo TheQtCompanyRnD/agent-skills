@@ -88,12 +88,13 @@ compiler subdirectory name, the binary suffix, and the PATH lookup command:
 Find the qmlprofiler executable. Try these sources in order and use the
 first one that has `bin/qmlprofiler` (or `bin\qmlprofiler.exe` on Windows):
 
-1. **CLAUDE.md** — look for a `CMAKE_PREFIX_PATH` or explicit Qt path.
-2. **Environment** — check `$CMAKE_PREFIX_PATH`, `$QTDIR`, `$Qt6_DIR`
+1. **Qt Creator MCP Server** - look for `get_qt_directory` tool to get the path of the Qt installation.
+2. **CLAUDE.md** — look for a `CMAKE_PREFIX_PATH` or explicit Qt path.
+3. **Environment** — check `$CMAKE_PREFIX_PATH`, `$QTDIR`, `$Qt6_DIR`
    (`%CMAKE_PREFIX_PATH%` etc. on Windows).
-3. **PATH** — run `which qmlprofiler` (Linux/macOS) or
+4. **PATH** — run `which qmlprofiler` (Linux/macOS) or
    `where qmlprofiler` (Windows).
-4. **Common locations** — glob the list matching the detected OS:
+5. **Common locations** — glob the list matching the detected OS:
    - **Linux**: `/home/*/Qt/6.*/gcc_64`, `/opt/Qt/6.*/gcc_64`,
      `/usr/lib/qt6`
    - **macOS**: `/Users/*/Qt/6.*/macos`, `/Applications/Qt/6.*/macos`
