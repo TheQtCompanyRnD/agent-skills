@@ -35,6 +35,7 @@ Improving this document is a valid contribution too.
 - [Testing your skill](#testing-your-skill)
 - [Submitting your contribution](#submitting-your-contribution)
 - [Skill checklist](#skill-checklist)
+- [Releasing a new version](#releasing-a-new-version)
 - [Getting help](#getting-help)
 
 
@@ -618,6 +619,53 @@ every item applies to every skill -- use your judgment.
 - [ ] `agents/openai.yaml` for Codex CLI
 - [ ] `platforms/windsurf.md` (under 6K chars)
 - [ ] Other platform variants as needed
+
+
+## Releasing a new version
+
+When a new skill or a meaningful change is ready to publish, the
+plugin version needs to be bumped across three metadata files:
+`.claude-plugin/marketplace.json`, `.claude-plugin/plugin.json`,
+and `gemini-extension.json`.
+
+Use the `bump-version.py` script in [`tools/`](tools/README.md) rather
+than editing the three files by hand (hand-edits are how the metadata
+files drift out of sync):
+
+```bash
+python tools/bump-version.py 1.7.0 --reason "Release of the qt-foo skill." --push
+```
+
+What the script does:
+
+1. Detects the current version from `plugin.json` and refuses if
+   the target version equals it.
+2. Fetches `origin/dev` and creates a throwaway `bump-version-<version>`
+   branch off it, so the bump is cut from current trunk. The bump always
+   lands on `dev` — that is the branch every release is cut from.
+3. Rewrites every `version` field in the three metadata files to the
+   new version, keeping the copies in lockstep. A field that has
+   drifted out of sync is brought back into line rather than skipped.
+4. Commits with the message `Bump plugin version to <version>` and
+   your `--reason` line as the body. The Gerrit `commit-msg` hook adds
+   the `Change-Id`.
+5. Pushes to `refs/for/dev` when `--push` is set. Without `--push` the
+   commit stays local for review before sending.
+
+| Argument | Purpose |
+|----------|---------|
+| `version` | Target SemVer (required, e.g. `1.7.0`). |
+| `--reason` | One-line release note for the commit body (**required**). |
+| `--push` | Push to Gerrit (`refs/for/dev`) after committing. |
+
+The version-bump change should land **after** the change that adds the
+new content (skill, MCP server, etc.) is merged, so the release surface
+and the released artifacts agree.
+
+Cutting a long-lived `release/<version>` branch for an independently
+maintained release line is a separate, infrequent act reserved for major
+versions — see [`tools/README.md`](tools/README.md#cutting-a-maintained-release-branch)
+for that manual step. The bump script does not do it.
 
 
 ## Getting help
