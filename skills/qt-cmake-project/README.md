@@ -1,4 +1,4 @@
-# Qt Project Skill
+# Qt CMake Project Skill
 
 Helps AI coding tools set up and evolve Qt 6 projects built with
 CMake. Corrects systematic LLM biases — qmake leftovers, the
@@ -45,7 +45,7 @@ and per-command reference pages.
 |----------|---------|
 | **Claude Code** | `/plugin marketplace add TheQtCompanyRnD/agent-skills` then `/plugin install qt-development-skills` |
 | **Codex CLI** | `npx skills add TheQtCompanyRnD/agent-skills` |
-| **GitHub Copilot** | `gh skill install TheQtCompanyRnD/agent-skills qt-project` (preview) — or auto-discovered from `.claude/skills/` |
+| **GitHub Copilot** | `gh skill install TheQtCompanyRnD/agent-skills qt-cmake-project` (preview) — or auto-discovered from `.claude/skills/` |
 | **Gemini CLI** | `gemini extensions install https://github.com/TheQtCompanyRnD/agent-skills` |
 
 ## Files

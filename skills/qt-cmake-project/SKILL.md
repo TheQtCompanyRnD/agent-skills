@@ -1,5 +1,5 @@
 ---
-name: qt-project
+name: qt-cmake-project
 description: >-
   Use to generate or update Qt 6 CMake projects or edit CMakeLists.txt, add
   sources/resources or define targets (executable, QML module, library).
@@ -9,7 +9,7 @@ compatibility: >-
 disable-model-invocation: false
 metadata:
   author: qt-ai-skills
-  version: "1.0"
+  version: "1.0.1"
   qt-version: "6.x"
   category: conceptual
 ---
