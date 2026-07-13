@@ -71,3 +71,11 @@ In **Agent Settings**, add a server entry pointing at the URL:
   }
 }
 ```
+
+## OpenCode
+
+Register the server globally by running:
+
+```shell
+opencode mcp add --url https://qt-docs-mcp.qt.io/mcp qt-docs
+```
