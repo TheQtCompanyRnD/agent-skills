@@ -23,15 +23,16 @@ source code. Does **not** cover Qt Quick 3D.
 4. **Parses the trace** — a bundled Python script reads the
    `.qtd` XML and emits a JSON summary covering range events,
    animation frame-time percentiles, memory allocation, and
-   pixmap cache usage.
+   pixmap cache usage — including any images that failed to
+   load, broken down per URL.
 5. **Analyzes hotspots** — maps the top locations to project
    source files and explains each against a QML performance
    anti-pattern catalogue (Binding, Javascript, HandlingSignal,
    Creating, Compiling, SceneGraph/Painting, Memory/Pixmap).
 6. **Writes a standalone report** — timestamped Markdown under
    `profiler/reports/` with event summary, animation/frame-time
-   table, memory/pixmap summaries, top 30 hotspots, and
-   detailed analysis of the top 5.
+   table, memory/pixmap summaries, failed image loads, top 30
+   hotspots, and detailed analysis of the top 5.
 
 ## Profiling profiles
 

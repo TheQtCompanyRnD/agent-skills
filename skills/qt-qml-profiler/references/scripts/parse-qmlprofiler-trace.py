@@ -6,7 +6,17 @@
 import json
 import sys
 import xml.etree.ElementTree as ET
-from collections import defaultdict
+from collections import Counter, defaultdict
+
+
+# cacheEventType values, from QQmlProfilerDefinitions::PixmapEventType in
+# qtdeclarative/src/qml/debugger/qqmlprofilerdefinitions_p.h.
+PIXMAP_SIZE_KNOWN = "0"
+PIXMAP_REFERENCE_COUNT_CHANGED = "1"
+PIXMAP_CACHE_COUNT_CHANGED = "2"
+PIXMAP_LOADING_STARTED = "3"
+PIXMAP_LOADING_FINISHED = "4"
+PIXMAP_LOADING_ERROR = "5"
 
 
 # ----- Phase 1: parse XML into typed event lists --------------------------
@@ -64,7 +74,6 @@ def _extract_events(root, event_defs):
                     "cacheEventType": ed["cacheEventType"],
                     "width": int(rng.get("width", 0)),
                     "height": int(rng.get("height", 0)),
-                    "refCount": int(rng.get("refCount", 0)),
                 })
             elif ed["type"] == "Event" and ed["animationFrame"]:
                 animation_events.append({
@@ -210,16 +219,33 @@ def _summarize_animations(animation_events):
 
 
 def _summarize_pixmap_cache(pixmap_events):
-    """Pixmap cache summary.
+    """Pixmap cache summary and failed-load breakdown.
 
-    cacheEventType from QQmlProfilerDefinitions::PixmapEventType:
-    0=SizeKnown (carries width/height), 2=CacheCountChanged (refCount=0
-    entries are evictions), 3=LoadingStarted. Key on SizeKnown for
-    "loaded" because that's where dimensions are recorded.
+    ``unaccounted`` is ``load_requests - loaded - failed``, signed:
+    positive for loads still in flight when the app exited, negative for
+    loads that resolved but whose LoadingStarted predates the trace
+    window (recording began late, or attached to a running app).
+    SizeKnown is the only event carrying width/height, so the pixmap
+    dimension list is built from it.
+
+    ``cache_count_changes`` is not an eviction count: CacheCountChanged
+    fires on insertion as well as removal, and the cache size that would
+    separate the two is always 0 in a .qtd file (QTBUG-148750). Do not
+    derive a split from ``refCount``.
+
+    Returns ``(pixmap_cache, pixmap_errors)``; ``pixmap_errors`` is
+    ``None`` when every load succeeded.
     """
-    loaded = [e for e in pixmap_events if e["cacheEventType"] == "0"]
-    requests = [e for e in pixmap_events if e["cacheEventType"] == "3"]
-    removed = [e for e in pixmap_events if e["cacheEventType"] == "2"]
+    sized = [e for e in pixmap_events
+             if e["cacheEventType"] == PIXMAP_SIZE_KNOWN]
+    requests = [e for e in pixmap_events
+                if e["cacheEventType"] == PIXMAP_LOADING_STARTED]
+    finished = [e for e in pixmap_events
+                if e["cacheEventType"] == PIXMAP_LOADING_FINISHED]
+    errors = [e for e in pixmap_events
+              if e["cacheEventType"] == PIXMAP_LOADING_ERROR]
+    cache_changes = [e for e in pixmap_events
+                     if e["cacheEventType"] == PIXMAP_CACHE_COUNT_CHANGED]
 
     pixmap_list = [
         {
@@ -228,16 +254,32 @@ def _summarize_pixmap_cache(pixmap_events):
             "height": e["height"],
             "pixels": e["width"] * e["height"],
         }
-        for e in loaded
+        for e in sized
     ]
     pixmap_list.sort(key=lambda x: -x["pixels"])
 
-    return {
+    pixmap_cache = {
         "load_requests": len(requests),
-        "loaded": len(loaded),
-        "removed": len(removed),
+        "loaded": len(finished),
+        "failed": len(errors),
+        "unaccounted": len(requests) - len(finished) - len(errors),
+        "cache_count_changes": len(cache_changes),
         "pixmaps": pixmap_list,
     }
+
+    if not errors:
+        return pixmap_cache, None
+
+    by_url = Counter(e["filename"] for e in errors)
+    pixmap_errors = {
+        "total": len(errors),
+        "distinct_urls": len(by_url),
+        "by_url": [
+            {"filename": f, "count": c}
+            for f, c in sorted(by_url.items(), key=lambda kv: (-kv[1], kv[0]))
+        ],
+    }
+    return pixmap_cache, pixmap_errors
 
 
 # ----- Phase 3: format / evaluate ------------------------------------------
@@ -320,7 +362,10 @@ def parse_trace(path):
                 type_summary, formatted_hotspots, animations["frame_count"])
 
     if pixmap_events:
-        result["pixmap_cache"] = _summarize_pixmap_cache(pixmap_events)
+        pixmap_cache, pixmap_errors = _summarize_pixmap_cache(pixmap_events)
+        result["pixmap_cache"] = pixmap_cache
+        if pixmap_errors is not None:
+            result["pixmap_errors"] = pixmap_errors
 
     return result
 

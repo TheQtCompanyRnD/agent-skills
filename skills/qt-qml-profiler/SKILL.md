@@ -255,6 +255,9 @@ proceeding:
 
 Ask whether to retry or proceed with what was captured.
 
+Keep the application's stderr from the run: its `QML Image:` lines are
+what separates genuine load failures from cancellations in Step 6.
+
 ### Step 4 — Parse the trace
 
 Run the parser script on the trace file (quote the paths if they contain
@@ -437,40 +440,56 @@ Write the report file containing:
 
    Format byte values in human-readable units (KB/MB/GB).
 5. **Pixmap cache summary** (if `pixmap_cache` key is present) — table
-   showing: load requests, loaded count, removed count. List all loaded
-   pixmaps with filename, dimensions (width x height), and pixel count.
-   Flag images that are loaded at larger sizes than typical display
-   resolution as potential optimization targets.
-6. **Top 30 hotspots table** — all hotspots from the parser with columns:
+   of `load_requests`, `loaded` and `failed`; never leave the gap between
+   them unexplained. `unaccounted` is `load_requests - loaded - failed`
+   and is signed: state it when non-zero — positive means loads in flight
+   at exit, negative means loads whose start predates the trace. Label
+   `cache_count_changes` "cache size changes" and nothing more: it counts
+   insertions *and* removals indistinguishably, so never infer evictions,
+   thrashing or re-rasterisation from it. Then list the 15 largest of
+   `pixmaps` (parser-sorted) with dimensions and pixel count, give the
+   total — which may be under `loaded` — and flag any rasterised far
+   larger than it is displayed.
+6. **Failed or cancelled image loads** (if `pixmap_errors` is present) —
+   its own section. Lead with `total` failures across `distinct_urls`
+   URLs and the rate against `load_requests`, then a `by_url` table,
+   highest first. Do not call these bugs: cancelled loads report the same
+   event. Given the run's stderr, compare its `QML Image:` count against
+   `total` and report the split; without it, say the trace cannot tell
+   them apart. Causes and diagnostics:
+   [qml-performance-anti-patterns.md](references/qml-performance-anti-patterns.md).
+7. **Top 30 hotspots table** — all hotspots from the parser with columns:
    rank, `total_ms`, `count`, `avg_ms`, `ms_per_frame` (if animations
    present), type, source location, details. The **source location**
    column uses the clickable link form from "Source location links"
    above. Show the `details` field in its own column to give context
    about what's actually being measured. Sort by `total_ms` (the parser
    already does this).
-7. **Detailed analysis** — for each of the top 5 project hotspots:
+8. **Detailed analysis** — for each of the top 5 project hotspots:
    source excerpt, explanation, suggested fix. Head each subsection with
    the clickable source-location link (see "Source location links").
-8. **Next steps** — list the concrete fixes suggested in the detailed
-   analysis, in priority order. If the top hotspots cluster in 2–4
-   project files, add a one-line cross-reference suggesting the user
-   run `qt-qml-review` on those specific files for broader structural
-   analysis. Skip this cross-reference if hotspots are scattered, are
-   in Qt-internal files, or otherwise do not yield a concrete file
-   list — generic "you might also want…" filler erodes report
-   credibility. If the user applies fixes, they can re-run the skill
-   to get a fresh diagnosis.
+9. **Next steps** — the concrete fixes from the detailed analysis, in
+   priority order, ranking stderr-confirmed image-load failures above
+   micro-optimizations (user-visible, however cheap the load path);
+   without stderr — as in analysis-only mode — list them but do not give
+   them that precedence. If the top hotspots resolve to a short list of
+   project files — a handful, not a dozen — add a one-line cross-reference
+   suggesting `qt-qml-review` on those files for broader structural
+   analysis; skip it when hotspots are scattered, are in Qt-internal
+   files, or otherwise yield no concrete list, since generic "you might
+   also want…" filler erodes credibility. If the user applies fixes,
+   they can re-run for a fresh diagnosis.
 
    Do **not** write a "comparing runs" section, "before/after" table, or
    any content framed as a delta against a prior report. This skill
    produces one standalone diagnosis per run. If the user wants to
    compare runs, they read two standalone reports side by side.
-9. **AI-assistance footer** — end the report with the exact line:
+10. **AI-assistance footer** — end the report with the exact line:
 
-   > AI assistance has been used to create this output.
+    > AI assistance has been used to create this output.
 
-   This must always be present, regardless of profile mode or which
-   sections above were rendered.
+    This must always be present, regardless of profile mode or which
+    sections above were rendered.
 
 ### Step 7 — Console summary
 
@@ -480,7 +499,10 @@ Display to the user:
   with `frame_ms_p95` / `frame_ms_p99` / `frames_over_33ms`, not
   average framerate
 - Memory summary (if present in parser output)
-- Pixmap cache summary (if present in parser output)
+- Pixmap cache (if present) — `load_requests` / `loaded` / `failed` plus
+  non-zero `unaccounted`; never `cache_count_changes` as evictions
+- Failed or cancelled image loads (if `pixmap_errors` present) — total,
+  URLs, worst two or three; state these even when hotspots are unrelated
 - Top 5 hotspots with brief analysis
 - Path to the full report file
 

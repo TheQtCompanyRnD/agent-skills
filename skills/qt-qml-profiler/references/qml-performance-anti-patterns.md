@@ -117,3 +117,34 @@ when navigating to new views.
 - Use `asynchronous: true` on Image for off-thread loading
 - Reuse components via `reuseItems: true` in ListView
 - Monitor with `QSG_RENDERER_DEBUG=render` environment variable
+
+## Failed or cancelled image loads
+
+**Symptom:** Non-zero `failed` in `pixmap_cache`, with a `pixmap_errors`
+per-URL breakdown. `load_requests` exceeds `loaded` by `failed`, offset by
+`unaccounted` where the trace window clipped a load's start or end. A count
+above 1 for one URL is repeated attempts, not a retry loop: failures are
+never cached, so every reference re-attempts.
+
+**Common causes:**
+- **Cancellation, not failure** — `source` changed or the item destroyed
+  mid-load reports the same event. Usually the commonest cause (flicking
+  views, `Loader` churn), and not a bug.
+- Wrong, stale or mistyped path, or a file missing from the `.qrc` /
+  the QML module's `RESOURCES`
+- A custom `QQuickImageProvider` returning a null image — an
+  `image://<provider>/…` scheme points here, not at the file system
+- Provider query parameters (e.g. `?color=…`) not handled for every
+  requested variant
+- Unsupported format, or an image format plugin missing from a deployed
+  build
+
+**Fixes:**
+- Read the app's stderr — `QQuickImageBase` prints the reason
+  unconditionally, one `QML Image:` line per failure (`Cannot open:`,
+  `Failed to get image from provider:`, …). Cancellations print nothing,
+  so `QML Image:` lines short of the error count were cancelled loads.
+- Verify the URL resolves, or test the provider's `requestImage()`
+  directly for the failing IDs
+- Handle `Image.status === Image.Error` so failures are visible during
+  development instead of silent
