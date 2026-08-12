@@ -15,7 +15,7 @@ disable-model-invocation: false
 argument-hint: "[--profile <full|rendering|logic|memory>] -- <executable> [app-args...] | <trace.qtd>"
 metadata:
   author: qt-ai-skills
-  version: "1.0"
+  version: "1.1"
   qt-version: "6.x"
   category: tool
 ---
@@ -38,7 +38,8 @@ costs, shader variants, render passes).
 If the profiled app uses Qt Quick 3D, 2D results are still valid but any
 3D bottlenecks will be invisible in the output — inform the user and
 recommend using Qt Creator's profiler UI or a dedicated 3D profiler for
-those.
+those. The parser emits `quick3d_events_dropped` when a trace holds both
+2D and 3D events, and errors when it holds only 3D.
 
 ## Guardrails
 
@@ -281,6 +282,8 @@ known case:
 - `"Failed to parse trace file"` → trace truncated, app likely killed
   mid-write; rerun Step 3 and let the app exit cleanly.
 - `"Trace file not found"` → wrong path; re-check Step 3's output.
+- `"Trace contains only Qt Quick 3D events"` → the app is Qt Quick 3D,
+  which this skill does not cover; do not suggest rebuilding.
 
 Do not proceed to Step 5 with an empty or partial parser result.
 
@@ -328,7 +331,9 @@ e.g. `[Main.qml:42](../../src/ui/Main.qml#L42)`. The path is relative to
 the report's directory (`profiler/reports/`); the `#L<line>` anchor
 points to the hotspot's line. Leave Qt-internal
 (`qrc:/qt-project.org/…`), `[source unresolved]`, and skipped locations
-as plain text — never fabricate a path just to produce a link.
+as plain text — never fabricate a path just to produce a link. When
+`line` is 0, link the file alone: `[File.qml](<relative-path>)`, with no
+`:0` and no `#L0` anchor.
 
 Generate a report filename with the application name and a timestamp,
 and place it under a dedicated reports directory (create the directory
@@ -370,10 +375,12 @@ Write the report file containing:
      or any run without animation capture, omit the run-duration line
      and note "wall-clock duration unavailable (no animation events
      captured)".
-   - `range_events_total_ms` from the parser — label this clearly as
-     "sum of captured range-event durations (binding/JS/creating/etc);
-     **not** wall-clock time"
+   - `range_events_total_ms` — label it "sum of captured range-event
+     durations; **not** wall-clock and **not** total CPU: ranges nest, so
+     JS inside a signal handler is counted in both"
    - `total_events` count
+   - `quick3d_events_dropped` if present — N 3D events captured but not
+     analysed, so 3D costs are absent here
 2. **Event type summary** — table of event types with columns: type,
    count, `total_ms`, and `ms_per_frame` (if animations are present).
    The honest headline for per-frame CPU cost is `ms_per_frame`, not
@@ -386,18 +393,20 @@ Write the report file containing:
    block:
    - Frame time = wall-clock gap between successive frames; lower is
      smoother.
-   - p50 is the median; p95 / p99 mean 5% / 1% of frames were worse
-     than that value; max is the worst single frame.
+   - p50 is the median; p95 / p99 mean no more than 5% / 1% of frames
+     were worse than that value; max is the worst single frame.
    - Vsync reference at 60 Hz: ~16.67 ms/frame; > 33 ms is visible
      stutter, > 50 ms is a stall.
 
-   Then translate **this run's** p95 and p99 into concrete counts
-   using `frame_count`: N = round(5% × frame_count) for p95, round(1%
-   × frame_count) for p99 — e.g. "p95 = 66.67 ms → ~45 frames ≥ 67
-   ms".
+   Jank is `frames_over_25/33/50ms`; cite `frames_ge_p95` / `frames_ge_p99`
+   only as percentile context, and only well below `frame_count` — a wide
+   plateau makes them near the total on a clean run. Never compute them as
+   5% / 1% of `frame_count`: quantised frame times make many frames tie at
+   the percentile, so the parser counts them directly.
 
-   Then render a table with the fields from `animations`, bolding the
-   **diagnostic** ones: `frame_ms_p50/p95/p99/max` and
+   Then table the `animations` fields, labelling `distinct_frame_ms`
+   "distinct frame times" and bolding **diagnostic**
+   `frame_ms_p50/p95/p99/max` and
    `frames_over_25ms / 33ms / 50ms`. Any non-zero `frames_over_33ms`
    indicates user-visible jank; any non-zero `frames_over_50ms`
    indicates severe stalls.
@@ -499,6 +508,7 @@ Display to the user:
   with `frame_ms_p95` / `frame_ms_p99` / `frames_over_33ms`, not
   average framerate
 - Memory summary (if present in parser output)
+- Qt Quick 3D caveat, if `quick3d_events_dropped` is present
 - Pixmap cache (if present) — `load_requests` / `loaded` / `failed` plus
   non-zero `unaccounted`; never `cache_count_changes` as evictions
 - Failed or cancelled image loads (if `pixmap_errors` present) — total,
@@ -510,10 +520,10 @@ Keep console output concise. The detailed analysis is in the report file.
 
 When referencing a source location in the console response, make it an
 openable link: `[File.qml:<line>](file://<absolute-path>)` — keep the
-line number in the link text, but use a `file://` URL with the absolute
-path and no `#L<line>` fragment. On Windows, convert the path to a valid
-file URI: replace backslashes with forward slashes and prefix the drive
-letter with a slash, so `C:\proj\Main.qml` becomes
+line number in the link text unless `line` is 0, but use a `file://` URL
+with the absolute path and no `#L<line>` fragment. On Windows, convert
+the path to a valid file URI: replace backslashes with forward slashes
+and prefix the drive letter with a slash, so `C:\proj\Main.qml` becomes
 `file:///C:/proj/Main.qml`.
 
 Do not describe this run as an improvement or regression relative to
