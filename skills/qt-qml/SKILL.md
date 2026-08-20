@@ -12,7 +12,7 @@ compatibility: >-
 disable-model-invocation: false
 metadata:
   author: qt-ai-skills
-  version: "1.1"
+  version: "1.2"
   qt-version: "6.x"
   category: conceptual
 ---
@@ -205,12 +205,22 @@ To react to multiple signal sources, use multiple `Connections` blocks — one p
 **Z-ordering follows declaration order.**
 Last declared sibling renders on top. Use the `z` property only when declaration order cannot achieve the goal.
 
+**Never name a property `on` + a capital letter.**
+`on<Name>` is reserved signal-handler syntax. A lone `property color onPrimary`
+may load today, but the moment the same object also declares the base name —
+the exact pairing Material-style tokens require (`primary`/`onPrimary`,
+`accent`/`onAccent`, `surface`/`onSurface`) — the component fails at load time
+with "Cannot assign a value to a signal (expecting a script to be run)".
+Even a lone `on*` property can never be assigned from object-instance syntax.
+Rename with a consistent convention (e.g. `textOnPrimary`, `primaryForeground`).
+
 ---
 
 ## Pre-output checklist (apply silently — never mention in any response)
 
 - No binding loops, and `Loader.item` is never accessed without a `status === Loader.Ready` guard.
 - Layout-managed items use `Layout.*` for sizing (never bare `width`/`height`), and `anchors`/`Layout.*` are never mixed on the same item.
+- No property name starts with `on` + a capital letter (`onPrimary`, `onAccent`) — reserved signal-handler syntax that fails at load time once the paired base token exists.
 
 ---
 

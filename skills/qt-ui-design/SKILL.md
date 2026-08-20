@@ -8,7 +8,7 @@ compatibility: >-
 disable-model-invocation: false
 metadata:
   author: qt-ai-skills
-  version: "1.0"
+  version: "1.1"
   qt-version: "6.x"
   category: conceptual
   changelog: "Initial release"
@@ -182,6 +182,7 @@ Every desktop and web interface must support multiple input methods. Do not desi
 Colour should communicate meaning consistently across the entire interface. Avoid arbitrary colour choices.
 
 - **Use role-based tokens, not raw hex values.** Token names should describe the role a colour plays (interactive, surface, on-surface, error, outline), not its appearance (blue, dark-blue, grey-2). The role vocabulary above mirrors Material Design 3; when the project's design language is Fluent 2 or Apple Human Interface Guidelines, map to the equivalent role names from those systems rather than mixing vocabularies. If the project ships with a Figma token set, copy the tokens manually into a singleton until tooling is available to extract them.
+- **QML naming caveat for on-colours.** When tokens become QML properties, names beginning with `on` + a capital letter (`onSurface`, `onPrimary`) collide with QML's signal-handler syntax and fail at load time ("Cannot assign a value to a signal") once the paired base token (`surface`, `primary`) is declared in the same object — exactly the pairing Material's on-colours require. Rename the QML property (e.g. `textOnSurface`, `surfaceForeground`).
 - **Distinguish interactive colour from decorative colour.** A colour used on a button to signal "this is tappable" must not also be used as a background accent that doesn't invite interaction. Reusing interactive colour decoratively trains users to tap things that aren't tappable.
 - **Colour is never the sole carrier of state.** Already covered in section 2 (WCAG), but applies equally to non-disabled states: success, warning, and error must always pair colour with an icon or text label.
 - **Dark mode:** Design for both light and dark themes from the start. Token-based colour systems handle this automatically — if hardcoded colours are used, a dark variant must be explicitly defined.
