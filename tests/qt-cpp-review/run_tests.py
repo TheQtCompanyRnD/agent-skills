@@ -31,6 +31,7 @@ EXPECTED_UNIVERSAL = {
     ("test_all_rules.h", "DEP-13"): 1,
     ("test_all_rules.h", "PAT-9"): 1,
     ("test_all_rules.h", "ENM-2"): 1,
+    ("test_all_rules.h", "ENM-9"): 1,
     ("test_all_rules.h", "TMO-1"): 2,  # timeout + interval
     ("test_all_rules.h", "API-5"): 2,  # getNoteTitle + getNoteStatistics
 
@@ -55,6 +56,7 @@ EXPECTED_UNIVERSAL = {
     ("test_all_rules.cpp", "PAT-8"): 1,
     ("test_all_rules.cpp", "VAL-5"): 1,
     ("test_all_rules.cpp", "VAR-3"): 1,
+    ("test_all_rules.cpp", "ENM-9"): 1,
     ("test_all_rules.cpp", "API-5"): 1,
     ("test_all_rules.cpp", "PAT-10"): 1,
     ("test_all_rules.cpp", "PAT-11"): 1,

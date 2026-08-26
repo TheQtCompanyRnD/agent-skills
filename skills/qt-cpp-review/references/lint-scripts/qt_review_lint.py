@@ -180,6 +180,12 @@ RE_API5_LEGIT = re.compile(
 RE_ENM2_UNSCOPED = re.compile(r'^\s*enum\s+[A-Z]\w*\s*\{')
 RE_ENM2_CLASS = re.compile(r'enum\s+class')
 RE_ENM2_TYPED = re.compile(r'enum\s+[A-Z]\w*\s*:')
+RE_ENM9_BOOL_PARAMS = re.compile(
+    r'\([^()]*\bbool\s+\w+[^()]*,[^()]*\bbool\s+\w+'
+)
+RE_ENM9_BOOL_ARGS = re.compile(
+    r'[(,]\s*(?:true|false)\s*,\s*(?:true|false)\s*[),]'
+)
 RE_PAT9_QLIST_QSTR = re.compile(r'QList\s*<\s*QString\s*>')
 RE_PAT10_RET_MOVE = re.compile(r'return\s+std::move\s*\(')
 RE_PAT11_QREGEX = re.compile(r'QRegularExpression\s+[a-zA-Z_]')
@@ -342,6 +348,11 @@ RULES_SIMPLE: list[Rule] = [
     Rule("API-5", RE_API5_GET,
          "get-prefix on getter \u2014 Qt reserves get for user interaction/decomposition",
          exclude=RE_API5_LEGIT),
+    # --- ENM ---
+    Rule("ENM-9", RE_ENM9_BOOL_PARAMS,
+         "Two or more bool parameters \u2014 boolean trap; use named enums (f(x, LogRule::DontLog))"),
+    Rule("ENM-9", RE_ENM9_BOOL_ARGS,
+         "Non-intuitive bool literal arguments \u2014 confusing at call site; use named enums"),
     # --- MDL (line-level) ---
     Rule("MDL-2", RE_MDL2_EMPTY_ROLES,
          "dataChanged with empty roles {} \u2014 forces full refresh; pass specific roles"),

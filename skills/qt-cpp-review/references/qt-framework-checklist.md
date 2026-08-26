@@ -123,6 +123,11 @@ Each rule has a short ID prefixed with `FW-` for cross-referencing.
 
 ## Enums (Framework)
 
+- **FW-ENM-1**: qnamespace.h is over-populated — a new general
+  enum there needs strong justification. Prefer the owning class,
+  or a Q_NAMESPACE domain namespace when the vocabulary is shared
+  across classes (class scope limits use cases and drives
+  duplication — weigh both; see universal ENM-10).
 - **FW-ENM-3**: New enumerators: `\value [since VERSION]` in docs.
 - **FW-ENM-6**: Scoped enums in QML-exposed classes:
   `Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")`.

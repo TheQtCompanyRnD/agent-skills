@@ -13,7 +13,7 @@ compatibility: Designed for Claude Code, GitHub Copilot, and similar agents.
 disable-model-invocation: false
 metadata:
   author: qt-ai-skills
-  version: "2.0"
+  version: "2.1"
   qt-version: "6.x"
   category: review
 argument-hint: "[framework]"
@@ -128,6 +128,8 @@ Collect all output before proceeding to Phase 2.
 - **LCY** (Lifecycle) — deleteLater, Q_ASSERT side effects,
   null guards, unbounded containers, qDeleteAll depth
 - **API** (Naming) — get-prefix, enum hygiene, QList<QString>
+- **ENM** (Enums) — scoping/underlying type, bool-trap
+  parameters and bool-literal call sites
 - **HDR/TMO/CND/VAL/TRN** — headers, timeouts, conditionals,
   value classes, ternary operator
 
@@ -280,6 +282,22 @@ semantics, enum hygiene, noexcept correctness.
 - Unscoped enums without explicit underlying type
 - Missing trailing comma on last enumerator
 - `switch` over enum with `default:` label (suppresses -Wswitch)
+- Fixed, project-owned vocabulary held in a string — a QString
+  parameter, member, or DTO/JSON field named like
+  state/mode/kind/phase/status, or compared against value
+  literals (`mode == "dark"`). Should be an enum; strings are
+  only for identifiers the project does not own (external
+  system names, protocol/vendor ids) (ENM-8)
+- Boolean parameter traps — non-intuitive `bool` parameters, or
+  call sites passing consecutive bool literals
+  (`f(x, false, false, true)`); should be named enums. Even a
+  single bool qualifies when the call site doesn't read
+  (`sort(true)`); clear ones like `setVisible(true)` are
+  fine (ENM-9)
+- Enum placement — a vocabulary shared across classes but
+  duplicated per class instead of centralized in one
+  `Q_NAMESPACE` namespace; in framework mode, additions to
+  qnamespace.h without strong justification (ENM-10, FW-ENM-1)
 - `QList<QString>` instead of `QStringList`
 - Missing `const` on methods that don't modify state
 - Case-sensitive string comparison for user-facing sort

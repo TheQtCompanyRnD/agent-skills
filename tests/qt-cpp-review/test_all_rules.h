@@ -39,6 +39,9 @@ void setAutoSaveInterval(int interval);
 QString getNoteTitle() const;
 QVariantMap getNoteStatistics();
 
+// ENM-9: Boolean parameter trap — two bool parameters
+void configureExport(const QString &path, bool overwrite, bool notify);
+
 // PRP / VAR-3: Direct brace initialization
 // (VAR-3 triggers on non-keyword direct init)
 // int count{0};  — would trigger but tricky in header context

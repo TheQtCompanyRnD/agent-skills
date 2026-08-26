@@ -90,6 +90,11 @@ qSwap(a, b);
 // VAR-3: Direct brace initialization
 int count{42};
 
+// ENM-9: Consecutive bool literal arguments at a call site
+void exportAll() {
+    configureExport(currentPath, false, true);
+}
+
 // PAT-10: return std::move()
 QVariantMap getStats() {
     QVariantMap stats;

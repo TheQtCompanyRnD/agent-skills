@@ -102,6 +102,28 @@ Qt module code.
 - **ENM-5**: `{}` (value 0) should mean "default".
 - **ENM-7**: Switch over enum: no `default:` label, list all
   enumerators explicitly.
+- **ENM-8**: A fixed, project-owned vocabulary must be an enum,
+  never a string. A parameter, member, or DTO/JSON field holding
+  a closed set of values (state, mode, kind, phase, status, …)
+  typed as QString gladly accepts new — and wrong — values;
+  adding a value must break every switch that forgot it, which
+  a string silently doesn't. Tells: `QString state`, comparisons
+  against value literals (`mode == "dark"`), a comment
+  enumerating the legal values. Strings are only for identifiers
+  the project does NOT own (external system names, protocol or
+  vendor ids).
+- **ENM-9**: The boolean parameter trap: non-intuitive `bool`
+  parameters — or a call site like `f(text, false, false, true)`
+  — must be named enums:
+  `f(text, LogRule::DontLog, ChangeRule::TestOnly,
+  FailureRule::AssertOnFailure)`. Even a single bool deserves an
+  enum when the call site doesn't read (`sort(true)`). Boolean
+  parameters are allowed when their function is clear at the
+  call site, like `setVisible(true)`.
+- **ENM-10**: Placement: class scope when the vocabulary belongs
+  to one class's API; a `Q_NAMESPACE`-registered namespace when
+  shared across classes. Never duplicate an enum because the
+  first copy was scoped too narrowly — widen the original.
 
 ## Exceptions / noexcept
 
