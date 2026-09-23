@@ -1,5 +1,6 @@
 // Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+
 // FontInterface.qml — [Project] Design System — Font Loaders & Icon Index
 // Source: design-tokens.json › typography + icon font file
 // CMake: set_source_files_properties(FontInterface.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
