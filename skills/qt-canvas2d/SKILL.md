@@ -116,7 +116,7 @@ one of those.
 | Rule | Detail |
 |---|---|
 | `save()`/`restore()` around any local state change | Style, transform and clip are sticky across the whole frame and across helpers. |
-| Exactly one `restore()` per `save()` | The stack is not reset between frames; an unbalanced `save()` leaks one level per frame. |
+| Exactly one `restore()` per `save()` | The stack is reset between frames |
 | `beginPath()` before every hand-built shape | Without it you re-fill everything accumulated since the last `beginPath()`. |
 | No `beginPath()` before `fill(path2d)`, `stroke(path2d)`, `drawBoxShadow()` | They take geometry from the argument. |
 | `resetTransform()` rather than counting `restore()`s in instancing loops | |
