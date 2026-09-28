@@ -113,7 +113,6 @@ ListView {
             // A pooled delegate keeps its canvas; repaint when it comes back
             // with new data, and never paint while pooled.
             ListView.onReused: requestPaint()
-            Component.onCompleted: requestPaint()
         }
 
         // Data can change while the row is live.

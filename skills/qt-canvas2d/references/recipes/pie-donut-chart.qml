@@ -48,10 +48,6 @@ Item {
         readonly property real outerR: Math.min(width * 0.32, height * 0.42)
         readonly property real innerR: outerR * 0.58
 
-        Component.onCompleted: requestPaint()
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-
         function drawWedge(ctx, from, to, explode) {
             const mid = (from + to) * 0.5;
             const ox = cx + Math.cos(mid) * explode;

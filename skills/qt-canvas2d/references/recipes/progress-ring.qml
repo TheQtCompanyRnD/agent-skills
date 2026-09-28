@@ -50,9 +50,6 @@ Canvas2D {
 
     onValueChanged: requestPaint()
     onIndeterminateChanged: requestPaint()
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
-    Component.onCompleted: requestPaint()
 
     onPaint: {
         const ctx = getContext("2d");

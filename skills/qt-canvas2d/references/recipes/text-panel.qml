@@ -29,10 +29,6 @@ Canvas2D {
     fillColor: "#14181d"
     alphaBlending: false
 
-    Component.onCompleted: requestPaint()
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
-
     function drawTitleWithRule(ctx, x, y) {
         // font: [style] [variant] [weight] size family — size and family are
         // mandatory and must come in that order. Quote families with spaces.

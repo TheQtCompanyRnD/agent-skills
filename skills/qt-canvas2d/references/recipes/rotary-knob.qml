@@ -67,7 +67,6 @@ Item {
         readonly property real cy: height * 0.46
         readonly property real radius: Math.min(width, height * 0.9) * 0.36
 
-        Component.onCompleted: requestPaint()
         onWidthChanged: { ticks.clear(); requestPaint(); }
         onHeightChanged: { ticks.clear(); requestPaint(); }
 

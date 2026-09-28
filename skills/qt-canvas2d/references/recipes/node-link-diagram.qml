@@ -53,10 +53,6 @@ Item {
         fillColor: "#14181d"
         alphaBlending: false
 
-        Component.onCompleted: requestPaint()
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-
         function drawEdges(ctx) {
             ctx.beginPath();
             for (let e = 0; e < root.edges.length; ++e) {

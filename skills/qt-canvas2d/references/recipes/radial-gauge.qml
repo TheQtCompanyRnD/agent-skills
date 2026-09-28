@@ -40,7 +40,6 @@ Canvas2D {
     onValueChanged: requestPaint()
     onWidthChanged: { ticksPath.clear(); requestPaint(); }
     onHeightChanged: { ticksPath.clear(); requestPaint(); }
-    Component.onCompleted: requestPaint()
 
     function buildTicks(cx, cy, r) {
         const major = 12;

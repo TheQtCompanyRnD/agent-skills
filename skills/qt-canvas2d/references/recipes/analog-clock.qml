@@ -54,7 +54,6 @@ Canvas2D {
 
     onWidthChanged: invalidateGeometry()
     onHeightChanged: invalidateGeometry()
-    Component.onCompleted: requestPaint()
 
     function invalidateGeometry() {
         minuteTicks.clear();

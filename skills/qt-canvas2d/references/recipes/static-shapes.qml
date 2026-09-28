@@ -24,10 +24,6 @@ Canvas2D {
     fillColor: "#1b1f24"
     alphaBlending: false
 
-    Component.onCompleted: requestPaint()
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
-
     // Every helper leaves the paint state exactly as it found it.
     function drawPrimitives(ctx, x, y, size) {
         ctx.save();

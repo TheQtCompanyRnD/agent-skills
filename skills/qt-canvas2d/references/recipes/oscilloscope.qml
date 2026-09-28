@@ -57,7 +57,6 @@ Canvas2D {
 
     onWidthChanged: { rulesPath.clear(); requestPaint(); }
     onHeightChanged: { rulesPath.clear(); requestPaint(); }
-    Component.onCompleted: requestPaint()
 
     function buildTrace(ctx, w, h) {
         const midY = h * 0.5;

@@ -36,10 +36,6 @@ Canvas2D {
         }
     }
 
-    Component.onCompleted: requestPaint()
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
-
     // A small reusable subject so every effect is applied to the same pixels.
     function drawSwatch(ctx, x, y, w, h, label) {
         const g = ctx.createLinearGradient(x, y, x + w, y + h);

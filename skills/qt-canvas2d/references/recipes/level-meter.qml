@@ -60,7 +60,6 @@ Canvas2D {
     onWidthChanged: { bed.clear(); requestPaint(); }
     onHeightChanged: { bed.clear(); requestPaint(); }
     onSegmentsChanged: { bed.clear(); requestPaint(); }
-    Component.onCompleted: requestPaint()
 
     function channelRect(index, count) {
         const trackX = scaleWidth + gutter;

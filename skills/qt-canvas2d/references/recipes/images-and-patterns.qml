@@ -57,9 +57,6 @@ Canvas2D {
         }
     }
 
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
-
     onPaint: {
         const ctx = getContext("2d");
 

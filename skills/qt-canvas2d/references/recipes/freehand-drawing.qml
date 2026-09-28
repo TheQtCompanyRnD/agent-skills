@@ -36,11 +36,6 @@ Canvas2D {
     fillColor: "#14181d"
     alphaBlending: false
 
-    Component.onCompleted: requestPaint()
-    // Coordinates are absolute, so a resize does not invalidate the ink.
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
-
     function beginStroke(x, y) {
         livePoints = [x, y];
         requestPaint();

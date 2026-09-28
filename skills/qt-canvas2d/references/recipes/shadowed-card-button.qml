@@ -43,10 +43,6 @@ Item {
         readonly property real inset: 14
         readonly property real radius: 16
 
-        Component.onCompleted: requestPaint()
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-
         function drawShadows(ctx, x, y, w, h) {
             const lift = root.elevation;
             const blur = 18 * lift + 4;

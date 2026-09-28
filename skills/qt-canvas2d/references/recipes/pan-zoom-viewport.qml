@@ -42,10 +42,6 @@ Canvas2D {
     fillColor: "#11151a"
     alphaBlending: false
 
-    Component.onCompleted: requestPaint()
-    // The scene is in world space, so a resize does NOT invalidate it.
-    onWidthChanged: requestPaint()
-    onHeightChanged: requestPaint()
     onPanXChanged: requestPaint()
     onPanYChanged: requestPaint()
     onZoomChanged: requestPaint()
