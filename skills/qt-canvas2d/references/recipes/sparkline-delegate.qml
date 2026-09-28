@@ -36,7 +36,7 @@ ListView {
                 const pts = [];
                 for (let s = 0; s < 40; ++s)
                     pts.push(0.5 + 0.45 * Math.sin(s * 0.35 + i) * Math.cos(s * 0.11));
-                append({ name: "sensor-" + i, series: pts, trend: (i % 3) - 1 });
+                append({ name: "sensor-" + i, series: JSON.stringify(pts), trend: (i % 3) - 1 });
             }
         }
     }
@@ -81,7 +81,7 @@ ListView {
             // is read. Caching only pays for geometry that outlives frames.
             onPaint: {
                 const ctx = getContext("2d");
-                const pts = row.series;
+                const pts = JSON.parse(row.series);
                 const n = pts ? pts.length : 0;
                 if (n < 2 || width <= 0)
                     return;
