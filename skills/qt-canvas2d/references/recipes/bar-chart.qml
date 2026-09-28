@@ -7,7 +7,7 @@
 //   - one rect()/roundRect() path for all bars, then a single fill()
 //   - boxgradient2d, which follows the rounded-rect shape
 //   - measureText() for label placement and collision avoidance
-//   - a separate cached path2d for the static baseline
+//   - the baseline drawn directly; a single line gains nothing from a path2d cache
 
 import QtQuick
 import QtCanvas2D
@@ -27,7 +27,6 @@ Canvas2D {
     ]
     property real growth: 0   // 0 -> 1 entry animation
 
-    property path2d baselinePath
     property boxgradient2d barFill
 
     readonly property real marginTop: 28
@@ -48,8 +47,6 @@ Canvas2D {
     }
     onGrowthChanged: requestPaint()
     onBarsChanged: requestPaint()
-    onWidthChanged: { baselinePath.clear(); requestPaint(); }
-    onHeightChanged: { baselinePath.clear(); requestPaint(); }
 
     onPaint: {
         const ctx = getContext("2d");
@@ -64,14 +61,13 @@ Canvas2D {
         const barW = slot * 0.62;
         const radius = Math.min(8, barW * 0.25);
 
-        // Static baseline, cached in path group 0.
-        if (baselinePath.isEmpty()) {
-            baselinePath.moveTo(marginSide, baseY + 0.5);
-            baselinePath.lineTo(marginSide + plotW, baseY + 0.5);
-        }
+        // Baseline.
+        ctx.beginPath();
+        ctx.moveTo(marginSide, baseY + 0.5);
+        ctx.lineTo(marginSide + plotW, baseY + 0.5);
         ctx.strokeStyle = "#39424c";
         ctx.lineWidth = 1;
-        ctx.stroke(baselinePath, 0);
+        ctx.stroke();
 
         // All bars in one path, one fill. Far cheaper than N fillRect() calls.
         ctx.beginPath();
