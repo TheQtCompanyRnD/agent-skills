@@ -3,9 +3,11 @@
 // Analog watch face: cached dial, transformed hands, smooth sweep second.
 //
 // The canonical "watch UI" case. Demonstrates:
-//   - a full dial (ticks + numerals) built once into cached path2d objects
-//   - hands drawn in rotated local frames, unwound with resetTransform()
-//   - one cache group per distinct path (groups share a vertex buffer)
+//   - a full dial (ticks + numerals) with ticks built once into cached path2d objects
+//   - paths that are always cleared and rebuilt together sharing one cache group
+//     (one vertex buffer)
+//   - hands drawn directly in rotated local frames, unwound with resetTransform();
+//     a single-command path like a roundRect gains nothing from a path2d cache
 //   - a shadowed bezel from createBoxShadow(), not shadowBlur
 //   - a smooth, sub-second sweep hand driven by FrameAnimation
 //   - the whole face scaling from a single `radius`, so it is resolution free
@@ -24,13 +26,9 @@ Canvas2D {
     // Static geometry, rebuilt only when the face size changes.
     property path2d minuteTicks
     property path2d hourTicks
-    property path2d hourHandPath
-    property path2d minuteHandPath
 
-    readonly property int minuteTickGroup: 0
-    readonly property int hourTickGroup: 1
-    readonly property int hourHandGroup: 2
-    readonly property int minuteHandGroup: 3
+    // Both tick paths are cleared and rebuilt together, so they share a group.
+    readonly property int tickGroup: 0
 
     readonly property real radius: Math.min(width, height) * 0.46
     readonly property real cx: width * 0.5
@@ -61,8 +59,6 @@ Canvas2D {
     function invalidateGeometry() {
         minuteTicks.clear();
         hourTicks.clear();
-        hourHandPath.clear();
-        minuteHandPath.clear();
         requestPaint();
     }
 
@@ -80,18 +76,15 @@ Canvas2D {
         }
     }
 
-    function buildHands() {
-        const r = radius;
-        // Both hands point along -Y in their local frame, pivot at the origin.
-        hourHandPath.roundRect(-r * 0.035, -r * 0.52, r * 0.07, r * 0.62, r * 0.035);
-        minuteHandPath.roundRect(-r * 0.024, -r * 0.78, r * 0.048, r * 0.88, r * 0.024);
-    }
-
-    function drawHand(ctx, path, group, angle) {
+    function drawHand(ctx, angle, handWidth, length) {
+        const tail = radius * 0.10;
         ctx.resetTransform();
         ctx.translate(cx, cy);
         ctx.rotate(angle);              // ctx.rotate() is RADIANS
-        ctx.fill(path, group);
+        // The hand points along -Y in its local frame, pivot at the origin.
+        ctx.beginPath();
+        ctx.roundRect(-handWidth / 2, -length, handWidth, length + tail, handWidth / 2);
+        ctx.fill();
         ctx.resetTransform();
     }
 
@@ -103,8 +96,6 @@ Canvas2D {
 
         if (minuteTicks.isEmpty())
             buildDial();
-        if (hourHandPath.isEmpty())
-            buildHands();
 
         // Bezel shadow, then the face plate.
         const shadow = ctx.createBoxShadow(cx - r, cy - r + r * 0.03,
@@ -120,14 +111,14 @@ Canvas2D {
         ctx.strokeStyle = "#2c343d";
         ctx.stroke();
 
-        // Dial: two cached path groups, different stroke weights.
+        // Dial: two cached paths in one group, different stroke weights.
         ctx.lineCap = "round";
         ctx.strokeStyle = "#6b7784";
         ctx.lineWidth = Math.max(1, r * 0.012);
-        ctx.stroke(minuteTicks, minuteTickGroup);
+        ctx.stroke(minuteTicks, tickGroup);
         ctx.strokeStyle = "#e6eaee";
         ctx.lineWidth = Math.max(1.5, r * 0.028);
-        ctx.stroke(hourTicks, hourTickGroup);
+        ctx.stroke(hourTicks, tickGroup);
 
         // Numerals, placed on the dial circle and kept upright.
         ctx.font = Math.round(r * 0.15) + "px sans-serif";
@@ -146,8 +137,8 @@ Canvas2D {
         const h12 = (now.getHours() % 12) + m / 60;
 
         ctx.fillStyle = "#e6eaee";
-        drawHand(ctx, hourHandPath, hourHandGroup, (h12 / 12) * 2 * Math.PI);
-        drawHand(ctx, minuteHandPath, minuteHandGroup, (m / 60) * 2 * Math.PI);
+        drawHand(ctx, (h12 / 12) * 2 * Math.PI, r * 0.07, r * 0.52);
+        drawHand(ctx, (m / 60) * 2 * Math.PI, r * 0.048, r * 0.78);
 
         // Second hand: thin enough that a live path beats a cached one.
         ctx.save();
