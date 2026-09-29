@@ -322,11 +322,11 @@ malformed nav, matching the GitHub Actions check.
 
 ### Adding a new skill page
 
-1. Create `docs/skills/<skill-name>.md` (use an existing skill page
-   as a template).
-2. Add it to `nav:` in `mkdocs.yml`.
-3. Add a row to the table in `docs/skills/index.md`.
-4. Run `mkdocs serve` to verify.
+Skill pages are generated at build time by `gen_skills.py`: each
+`skills/<skill-name>/SKILL.md` becomes a page, a row in the skills
+overview table and an entry in the Skills nav. Adding the skill
+directory is enough; don't create `docs/skills/<skill-name>.md` or
+edit `nav:` in `mkdocs.yml`. Run `mkdocs serve` to verify.
 
 ## Contributing
 
