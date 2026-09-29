@@ -168,6 +168,13 @@ The `platforms/` directory is a convention for this repository.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for full details on
 creating platform variants.
 
+Condensed variants and tools that can't run scripts or subagents
+give less thorough results. For example, GitHub Copilot loads only
+the static guidance of the review skills, without the linter or
+the parallel agents. See
+[Requirements and platform support](docs/skills/requirements.md)
+for per-skill requirements and limits.
+
 ## Installation
 
 Most AI coding tools can install skills directly from this
@@ -238,6 +245,9 @@ under `.claude/skills/`, so a single install can serve both
 tools. Use `/skills list` inside Copilot CLI to confirm what
 loaded.
 
+`qt-qml-test` also ships a self-contained Copilot variant in
+`skills/qt-qml-test/platforms/copilot.prompt.md`.
+
 ### VSCode Agents (Copilot and others)
 
 Run `Chat: Install Plugin From Source` from the Command Palette.
@@ -257,6 +267,24 @@ Or import skills into your project's context file:
 # Add to GEMINI.md (loaded automatically)
 echo '@skills/qt-qml-review/SKILL.md' >> GEMINI.md
 ```
+
+### Cursor and Windsurf
+
+Neither tool reads skill directories. Copy the skill in as a rule:
+
+```bash
+# Cursor: the full SKILL.md becomes a project rule
+mkdir -p .cursor/rules/qt-qml-review
+cp skills/qt-qml-review/SKILL.md .cursor/rules/qt-qml-review/RULE.md
+
+# Windsurf: use the condensed variant from platforms/
+mkdir -p .windsurf/rules
+cp skills/qt-qml-review/platforms/windsurf.md .windsurf/rules/qt-qml-review.md
+```
+
+Windsurf variants exist for `qt-cpp-review`, `qt-qml-review`,
+`qt-qml-docs` and `qt-qml`. Scripts and subagents don't run on
+these tools, so only the static guidance applies.
 
 ## Documentation site
 

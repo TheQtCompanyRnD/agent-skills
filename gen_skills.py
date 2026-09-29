@@ -132,6 +132,8 @@ with mkdocs_gen_files.open("skills/index.md", "w") as fh:
 summary_lines = ["* [Overview](index.md)"]
 if (Path("docs/skills/concepts.md")).exists():
     summary_lines.append("* [Concepts & triggers](concepts.md)")
+if (Path("docs/skills/requirements.md")).exists():
+    summary_lines.append("* [Requirements & platforms](requirements.md)")
 summary_lines.extend(
     f"* [{name}]({name}.md)" for name, _ in index_entries
 )
