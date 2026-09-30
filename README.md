@@ -2,8 +2,7 @@
 
 Official agentic skills for Qt software development
 and quality assurance, designed for use with AI coding tools
-such as Claude Code, Codex CLI, Gemini CLI, and
-GitHub Copilot.
+such as Claude Code, Codex CLI, and GitHub Copilot.
 
 Skills have been tested with frontier LLMs from the Claude,
 Gemini, and GPT model families.
@@ -33,6 +32,7 @@ for the full cross-platform story.
 | `qt-cpp-review` | Review | Deterministic linting + 6 parallel deep-analysis agents for Qt C++ code. Covers model rule compliance, memory ownership, thread safety, correctness, error handling, and performance. |
 | `qt-qml-review` | Review | Deterministic QML linting (47+ rules) + parallel deep-analysis agents for bindings, layout, loaders, delegates, states, and performance. |
 | `qt-qml` | Conceptual | QML best practices for writing, reviewing, fixing, and refactoring. Corrects systematic LLM pre-training biases around bindings, scoping, modules, JS interop, and types. |
+| `qt-canvas2d` | Conceptual | Qt Canvas2D (Qt 6.12+, Qt Canvas Painter) best practices for GPU-accelerated imperative 2D drawing in QML — gauges, charts, waveforms, freehand drawing. Corrects LLM confusion with the legacy Qt Quick `Canvas` and HTML5 `<canvas>` APIs |
 | `qt-ui-design` | Conceptual | UI design and audit for Qt/QML, web, and embedded (MPU/MCU) targets. Covers screen layout, navigation, and UX review with platform-aware defaults for geometry, viewing distance, input, and locale. |
 | `qt-qml-docs` | Process | Generates Markdown reference documentation for QML components and applications from .qml source files. |
 | `qt-cpp-docs` | Process | Generates Markdown reference documentation for Qt/C++ source files — classes, modules, utilities, headers, and entry points. |
@@ -78,6 +78,7 @@ skills/                           # All skills live here
     platforms/                    #   Platform-specific variants
   qt-qml-review/
   qt-qml/
+  qt-canvas2d/
   qt-ui-design/
   qt-qml-docs/
   qt-cpp-docs/
@@ -144,7 +145,6 @@ ways:
 |------|---------------|--------|-------|
 | **Claude Code CLI** | `~/.claude/skills/` | SKILL.md + references (native) | Full directory model with progressive loading |
 | **Codex CLI** | `~/.codex/skills/` | SKILL.md + references (native) | Full directory model; registered in `~/.codex/config.toml` |
-| **Gemini CLI** | Extension `skills/` | SKILL.md + references (native) | Installed via `gemini extensions install`; `@file.md` imports |
 | **GitHub Copilot** | `.github/skills/` or `.claude/skills/` (project), `~/.copilot/skills/` (personal) | SKILL.md + references (native) | Auto-discovered across Copilot CLI, coding agent, and VS Code; existing `.claude/skills/` setups Just Work |
 
 ### When platform-specific variants are needed
