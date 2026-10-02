@@ -17,7 +17,7 @@ compatibility: >-
   Designed for Claude Code, GitHub Copilot, Qwen Code, and similar agents.
 disable-model-invocation: false
 metadata:
-  version: "1.0"
+  version: "1.1"
   qt-version: "6.12"
   category: conceptual
 ---
