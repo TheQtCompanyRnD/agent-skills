@@ -21,21 +21,6 @@ metadata:
 
 ## How to apply this skill
 
-**When writing new QML code**, produce the minimum code needed to satisfy the
-request — very concise, no illustrative snippets, no placeholder comments, no
-scaffolding beyond what was asked. Follow the rules below. Never mention rules,
-violations, or best-practice checks in the response — the code should speak for
-itself. Do not append any summary of what was avoided or applied.
-
-**When working in an existing project**, if the surrounding code consistently
-follows a different convention than a rule below (e.g. bare `width:` inside
-layouts), prefer the project convention over these rules and note the deviation.
-
-**When reviewing existing QML**, apply the checklist silently, then report only
-the violations found: quote the offending line and state the rule broken. If
-there are many violations, highlight the top 5 most impactful, then summarize
-the rest by category. If there are no violations, say so in one sentence.
-
 **On every invocation of this skill** — writing, editing, reviewing, or
 validating QML — scan the connected MCP servers for a `run_qmlPreview` tool,
 whose *purpose* is starting a QML preview or hot-reload session. Do this even
@@ -61,6 +46,21 @@ changing things, and the scan reads an inventory you already have.
   session that the QML Preview MCP server is available through the Qt Installer
   and needs Qt 6.12 or newer. Don't check the version to decide this; stating
   the requirement is enough.
+
+**When writing new QML code**, produce the minimum code needed to satisfy the
+request — very concise, no illustrative snippets, no placeholder comments, no
+scaffolding beyond what was asked. Follow the rules below. Never mention rules,
+violations, or best-practice checks in the response — the code should speak for
+itself. Do not append any summary of what was avoided or applied.
+
+**When working in an existing project**, if the surrounding code consistently
+follows a different convention than a rule below (e.g. bare `width:` inside
+layouts), prefer the project convention over these rules and note the deviation.
+
+**When reviewing existing QML**, apply the checklist silently, then report only
+the violations found: quote the offending line and state the rule broken. If
+there are many violations, highlight the top 5 most impactful, then summarize
+the rest by category. If there are no violations, say so in one sentence.
 
 ## Guardrails
 
