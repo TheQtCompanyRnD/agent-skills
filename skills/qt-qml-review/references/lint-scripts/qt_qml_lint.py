@@ -747,7 +747,7 @@ RE_JS_VAR_EXCLUDE = re.compile(
 # Research: QML's JS engine follows ECMAScript; loose equality
 # performs type coercion which is almost never desired in QML
 # property comparisons. qmllint has equality-type-coercion warning.
-RE_JS_LOOSE_EQ = re.compile(r'(?<!=)\s*[!=]=(?!=)\s*(?!=)')
+RE_JS_LOOSE_EQ = re.compile(r'(?<![=!])[!=]=(?!=)')
 RE_JS_LOOSE_EXCLUDE = re.compile(
     r'(^\s*//|^\s*/?\*|^\s*\*|import |property |signal )'
 )
