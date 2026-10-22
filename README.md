@@ -283,23 +283,52 @@ Or import skills into your project's context file:
 echo '@skills/qt-qml-review/SKILL.md' >> GEMINI.md
 ```
 
-### Cursor and Windsurf
+### Cursor
 
-Neither tool reads skill directories. Copy the skill in as a rule:
+This repository is also a Cursor plugin marketplace
+(`.cursor-plugin/marketplace.json`), so the whole plugin — skills,
+review subagents and the Qt Documentation MCP server — installs in
+one step.
+
+**Team marketplace (Teams/Enterprise):** Dashboard → Plugins & MCPs
+→ Team Marketplaces → Add Marketplace → Import from Repo, paste
+`https://github.com/TheQtCompanyRnD/agent-skills`. The plugin then
+shows up under Customize, where you install it with project or
+user scope.
+
+**Local install (any plan):**
 
 ```bash
-# Cursor: the full SKILL.md becomes a project rule
-mkdir -p .cursor/rules/qt-qml-review
-cp skills/qt-qml-review/SKILL.md .cursor/rules/qt-qml-review/RULE.md
+git clone https://github.com/TheQtCompanyRnD/agent-skills \
+  ~/.cursor/plugins/local/qt-development-skills
+```
 
-# Windsurf: use the condensed variant from platforms/
+Run `Developer: Reload Window` and check Customize for the skills,
+agents and the `qt-docs` MCP server. Clone rather than symlink:
+Cursor only loads symlinks that resolve inside
+`~/.cursor/plugins/local/`.
+
+**Individual skills:** Cursor reads the same `SKILL.md` directory
+format from `.cursor/skills/`, `.agents/skills/` and, for
+compatibility, `.claude/skills/`, so a per-skill copy works too:
+
+```bash
+cp -r skills/qt-qml-review .cursor/skills/qt-qml-review
+```
+
+### Windsurf
+
+Windsurf does not read skill directories. Copy the condensed
+variant in as a rule:
+
+```bash
 mkdir -p .windsurf/rules
 cp skills/qt-qml-review/platforms/windsurf.md .windsurf/rules/qt-qml-review.md
 ```
 
 Windsurf variants exist for `qt-cpp-review`, `qt-qml-review`,
 `qt-qml-docs` and `qt-qml`. Scripts and subagents don't run on
-these tools, so only the static guidance applies.
+Windsurf, so only the static guidance applies.
 
 ## Documentation site
 

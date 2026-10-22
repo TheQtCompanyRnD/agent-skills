@@ -18,7 +18,7 @@ the people who publish the repository.
 
 | File | Purpose |
 |------|---------|
-| `bump-version.py` | Bump the plugin version across the three metadata files on a fresh branch off `origin/dev`, and optionally push it to Gerrit for review. |
+| `bump-version.py` | Bump the plugin version across all plugin metadata files on a fresh branch off `origin/dev`, and optionally push it to Gerrit for review. |
 
 ## bump-version.py
 
@@ -39,7 +39,8 @@ throwaway `bump-version-<version>` branch cut from it, then pushes to
 `refs/for/dev` — the bump lands on the trunk every release is cut from.
 
 The script keeps every `version` field in `.claude-plugin/marketplace.json`,
-`.claude-plugin/plugin.json`, and `gemini-extension.json` in lockstep. It
+`.claude-plugin/plugin.json`, `.cursor-plugin/marketplace.json`,
+`.cursor-plugin/plugin.json`, and `gemini-extension.json` in lockstep. It
 rewrites *any* semver-valued `version` field to the target, so a copy that has
 drifted out of sync is brought back into line rather than skipped.
 
