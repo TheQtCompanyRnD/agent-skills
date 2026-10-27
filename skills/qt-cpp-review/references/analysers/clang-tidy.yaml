@@ -1,0 +1,31 @@
+# Copyright (C) 2026 The Qt Company Ltd.
+# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+#
+# clang-tidy configuration used by qt_review_lint.py --analyse. Shipped with
+# the skill so results do not vary with a project's own .clang-tidy; override
+# with --clang-tidy-config=<file>. llvm-include-order is left out on purpose:
+# it conflicts with Qt's include order (INC rules).
+Checks: >
+  -*,
+  bugprone-unchecked-optional-access,
+  bugprone-unused-return-value,
+  bugprone-use-after-move,
+  clang-analyzer-*,
+  concurrency-mt-unsafe,
+  cppcoreguidelines-noexcept-move-operations,
+  cppcoreguidelines-special-member-functions,
+  cppcoreguidelines-use-enum-class,
+  cppcoreguidelines-virtual-class-destructor,
+  hicpp-multiway-paths-covered,
+  modernize-use-override,
+  performance-enum-size,
+  performance-move-const-arg,
+  performance-noexcept-move-constructor,
+  performance-unnecessary-value-param,
+  readability-const-return-type,
+  readability-simplify-boolean-expr
+CheckOptions:
+  # Keyed on the static type of the call: QIODevice::open does not match
+  # file.open() on a QFile, so every concrete class is listed.
+  - key:   bugprone-unused-return-value.CheckedFunctions
+    value: 'QFile::open;QSaveFile::open;QTemporaryFile::open;QBuffer::open;QIODevice::open;QSaveFile::commit;QTemporaryDir::isValid;QLockFile::tryLock;QDir::mkpath;QDir::mkdir;QDir::rmdir;QDir::remove;QFile::remove;QFile::copy;QFile::rename;QFile::flush;QProcess::waitForStarted;QProcess::waitForFinished;QSqlQuery::exec;QSqlQuery::prepare;QSqlDatabase::open;QSqlDatabase::transaction;QSqlDatabase::commit;QAbstractSocket::waitForConnected;QSharedMemory::create;QSharedMemory::attach;QSharedMemory::lock;QMutex::tryLock;QSemaphore::tryAcquire;QLibrary::load;QPluginLoader::load;QImage::save;QPixmap::save;QImageWriter::write;QThread::wait'

@@ -1,0 +1,17 @@
+# Copyright (C) 2026 The Qt Company Ltd.
+# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+#
+# clazy checks used by qt_review_lint.py --analyse (comma or newline
+# separated; '#' starts a comment). An unknown name is a hard error in
+# clazy-standalone, so validate additions against
+# `clazy-standalone --supported-checks-json`. level2 as a whole is left out
+# (rule-of-three, function-args-by-ref and qhash-namespace flood Qt's own
+# headers); its valuable checks are named individually. qt-keywords is added
+# by the linter in --framework mode only. detaching-member is left out: it
+# runs for minutes on large TUs (qquickflickable.cpp, over 10 minutes against
+# 5 s for every other check), so clazy times out and loses the whole TU.
+level0, level1
+old-style-connect, missing-qobject-macro, copyable-polymorphic
+use-chrono-in-qtimer, use-static-qregularexpression, assert-with-side-effects
+isempty-vs-count, reserve-candidates, container-inside-loop
+thread-with-slots, qt6-deprecated-api-fixes, qt6-header-fixes

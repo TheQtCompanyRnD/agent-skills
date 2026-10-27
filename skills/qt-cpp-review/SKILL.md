@@ -6,18 +6,19 @@ description: >-
   deterministic linting (60+ rules) then deep-analysis agents
   (scaled to the size of the change) covering model
   contracts, ownership, threading, API correctness, error
-  handling, and performance. Reports only high-confidence issues
-  (>80/100) with structured mitigations. Read-only — never
-  modifies code.
+  handling, and performance. Optionally runs clang-tidy and
+  clazy from the Qt installation. Reports only high-confidence
+  issues (>80/100) with structured mitigations. Read-only —
+  never modifies code.
 license: LicenseRef-Qt-Commercial OR BSD-3-Clause
 compatibility: Designed for Claude Code, GitHub Copilot, and similar agents.
 disable-model-invocation: false
 metadata:
   author: qt-ai-skills
-  version: "3.0"
+  version: "3.1"
   qt-version: "6.x"
   category: review
-argument-hint: "[framework]"
+argument-hint: "[framework] [analyse]"
 ---
 
 # Qt Code Review
@@ -37,6 +38,8 @@ then one consolidated report.
 - `/qt-cpp-review` — universal Qt6 C++ rules
 - `/qt-cpp-review framework` — also apply Qt framework/module rules
   (binary compatibility, exports, d-pointers, qdoc, QML versioning)
+- `/qt-cpp-review analyse` — also run clang-tidy and clazy; combines
+  with `framework`
 
 ## Framework mode
 
@@ -111,9 +114,9 @@ Never skip a phase.
 
 ```bash
 # codebase scope
-python3 <skill>/references/lint-scripts/qt_review_lint.py --summary [--framework] <files...>
+python3 <skill>/references/lint-scripts/qt_review_lint.py --summary [--framework] [--analyse] <files...>
 # diff scope, run inside the repository; no file arguments
-python3 <skill>/references/lint-scripts/qt_review_lint.py --summary [--framework] --diff=<range>
+python3 <skill>/references/lint-scripts/qt_review_lint.py --summary [--framework] [--analyse] --diff=<range>
 # fall back to `python` if python3 is not found
 ```
 
@@ -123,6 +126,25 @@ continue (in diff scope, take the file list from
 output. Rule families: INC, DEP, PAT, MDL, ERR, LCY, API, ENM, TMO,
 CND, VAL, HDR, TRN, VAR (60+ checks). Exit code 1 simply means
 findings exist; 2 means a usage or git error.
+
+In diff scope, line numbers refer to the end of the range. If a
+`diff: ... working tree differs` status line is printed, copy it into
+the report header, and read those files only through
+`git diff -U50 <range>`, never from disk.
+
+When `$ARGUMENTS` contains "analyse", add `--analyse` (and
+`--build-dir=<dir>` if the user named one). It runs the Qt
+installation's clang-tidy and clazy-standalone over the translation
+units in scope, using a `compile_commands.json` it finds itself, and
+merges their diagnostics as `CT:<check>` / `CZ:<check>` rows. Copy the
+printed `clang-tidy:` / `clazy:` status lines into the report header;
+do not look for the tools or configure a build yourself. The analysers
+are authoritative for type-level findings, the linter for Qt policy
+rules; the linter drops its rules they supersede on files they
+covered and lists them in the `superseded` status line. Otherwise,
+if `compile_commands.json` exists in the repo root, below `build*/`
+or in a sibling `<repo>-build`/`<repo>_build`, suggest `analyse` to
+the user in one line.
 
 ### Phase 2: Deep analysis (inline, or one agent per shard)
 
@@ -179,11 +201,17 @@ only:
    framework mode
 2. The root directory from the lint summary, the files in scope
    relative to it and, in diff scope, the
-   `git diff -U50 <range> -- <files>` command for them
-3. The lint summary rows for that agent's own files only (a shard
+   `git diff -U50 <range> -- <files>` command for them, plus the
+   files the `diff:` status line names, if printed, with the
+   instruction to take their line numbers only from the diff
+3. If the `superseded` status line is printed: the tools it names
+   and the `not analysed` files in that agent's scope, with the
+   instruction to skip those tools' `[CT:...]`/`[CZ:...]` tagged
+   checks in the other files
+4. The lint summary rows for that agent's own files only (a shard
    agent never needs the other shards' rows), with the instruction
    "do not re-report these lines"
-4. The instruction to load everything with one Bash call before
+5. The instruction to load everything with one Bash call before
    analysing, and to return findings in the format at the top of the
    rules file. Each tool call re-sends the agent's whole context, so
    one batched read instead of one Read per file is the single
@@ -206,8 +234,9 @@ tool supports; the contract is the same.
 
 Merge lint and agent findings. Deduplicate on file+line+issue. When
 duplicates disagree on confidence, keep the block with the highest
-score and its trace; never average scores. Write the report in the
-format below.
+score and its trace; never average scores. An agent finding on the
+same file and line as a `CT:`/`CZ:` row, about the same defect, is
+dropped: the analyser wins. Write the report in the format below.
 
 ## Confidence scoring
 
@@ -227,9 +256,10 @@ one mitigation each; only deep-analysis findings get a full block.
 
 **Scope**: [diff: `git diff HEAD~1..HEAD` | files: <paths>]
 **Files reviewed**: N
-**Issues found**: N (M from lint, K from deep analysis)
+**Issues found**: N (M from lint (A from analysers), K from deep analysis)
 **Agents**: N (shards ... | inline)
 **Framework mode**: [on / off]
+**Analysers**: [clang-tidy ran / skipped / not available / failed · clazy ...]
 
 ---
 
@@ -238,6 +268,7 @@ one mitigation each; only deep-analysis findings get a full block.
 | Rule | Count | Locations | Mitigation |
 |---|---|---|---|
 | LCY-2 QObject created with new but no parent | 3 | `main.cpp:12,40`, `widget.cpp:88` | Pass a parent or hold in a smart pointer. |
+| CZ:old-style-connect (analyser) | 2 | `view.cpp:31,57` | Use the pointer-to-member connect syntax. |
 | ... | | | |
 
 ---
@@ -288,4 +319,6 @@ Findings below confidence 60 are suppressed.
   lint rules (human reference)
 - `references/lint-scripts/qt_review_lint.py` — single-pass linter,
   `--summary` for grouped output, `--diff=<range>` for changed lines
-  only, `--framework` for module rules
+  only, `--framework` for module rules, `--analyse` to merge
+  clang-tidy and clazy (`references/lint-scripts/qt_analysers.py`,
+  config in `references/analysers/`)

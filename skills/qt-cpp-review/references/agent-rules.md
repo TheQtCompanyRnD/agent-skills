@@ -14,6 +14,11 @@ lint summary and must not re-report those lines.
 
 Rule IDs in parentheses refer to `qt-review-checklist.md`.
 
+**Analysers.** When the prompt says the analysers ran, skip the parts
+tagged `[CT:<check>]` (clang-tidy ran) or `[CZ:<check>]` (clazy ran),
+except in the files the prompt lists as not analysed. Do not re-report
+the tools' `CT:`/`CZ:` rows, and do not second-guess a tool's silence.
+
 ## Confidence and output format
 
 Score every candidate 0-100. Report 80 and above as findings, 60-79
@@ -82,9 +87,11 @@ line.
   linter flags `new QObject` without a parent argument on one line;
   the agent covers non-QObject types and ownership handed off later.
 - **Polymorphic classes** (PLY-2 to PLY-6): missing virtual
-  destructor, missing `Q_DISABLE_COPY_MOVE`, overrides changing
-  default arguments or access level, virtual marked by more than one
-  of `virtual`/`override`/`final`.
+  destructor `[CT:cppcoreguidelines-virtual-class-destructor]`,
+  missing `Q_DISABLE_COPY_MOVE` `[CZ:copyable-polymorphic]`,
+  overrides changing default arguments or access level, virtual
+  marked by more than one of `virtual`/`override`/`final`
+  `[CT:modernize-use-override]`.
 - **RAII and special member functions** (RAI-2, RAI-3, SMF-1,
   SMF-6): copyable resource handles, move-assignment not via
   move-and-swap, copy or move constructors implemented through
@@ -151,7 +158,8 @@ line.
   deducible template arguments.
 - **Properties and QObject layout** (PRP-1, PRP-3, QOB-1, QOB-4):
   missing `FINAL` on new `Q_PROPERTY`, property shadowing a
-  meta-method name, missing `Q_OBJECT`, non-idiomatic member order.
+  meta-method name, missing `Q_OBJECT` `[CZ:missing-qobject-macro]`,
+  non-idiomatic member order.
 - **`const QMetaObject::Connection`** preventing later disconnect.
 - **Duplicated validation logic** across classes.
 - **Tests** (TST-1 to TST-3) when test files are in scope.
@@ -161,7 +169,11 @@ line.
 - **Multi-line forms of the mechanical checks**: `QFile::open()`,
   `QJsonDocument::fromJson()`, `QNetworkReply::error()` and
   `QXmlStreamWriter::hasError()` checked on a later line or not at
-  all. The linter only sees the single-line pattern.
+  all. The linter only sees the single-line pattern. A discarded
+  `QFile::open()` result (and that of the other checked functions)
+  `[CT:bugprone-unused-return-value]`; results stored and never
+  checked, and the `fromJson()`/`error()`/`hasError()` forms stay
+  here.
 - **Negative values accepted where only positive are valid**
   (ERR-8): timer intervals, sizes, counts validated against zero only.
 - **Imported or downloaded data used without schema or version
@@ -176,7 +188,7 @@ line.
 ## A6. Performance & Code Quality
 
 - **Non-const `operator[]` on a shared `QHash` or `QMap` for a read**
-  (PRF-4), which detaches. Use `value()`.
+  (PRF-4), which detaches. Use `value()`. `[CZ:detaching-member]`
 - **Expensive work before a cheap early-exit check** (PRF-5).
 - **Dead code** (PRF-6): unreachable branches given preconditions,
   methods with no callers in scope, members maintained but never

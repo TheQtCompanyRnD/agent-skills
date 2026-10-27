@@ -29,6 +29,7 @@ Usage:
     python qt_review_lint.py --files-from=- < filelist.txt
     python qt_review_lint.py --summary <files...>
     python qt_review_lint.py --summary --diff=HEAD~1..HEAD
+    python qt_review_lint.py --summary --analyse [--build-dir=<dir>] <files...>
 
 Output: FILE:LINE RULE-ID MESSAGE (one per line)
         With --summary: findings grouped by rule and message, with
@@ -38,6 +39,23 @@ Output: FILE:LINE RULE-ID MESSAGE (one per line)
         the C++ files changed by `git diff <args>` and reports only
         findings on added or modified lines. Takes no file arguments.
         The summary then also lists the changed files and line counts.
+        Files are linted as they are at the end of the range, so line
+        numbers match `git diff <args>` even when the working tree has
+        changed since; the files that differ are named in a status line.
+With --analyse (or --clang-tidy / --clazy for one tool): also runs
+        clang-tidy and clazy-standalone from the Qt installation over the
+        translation units in scope, using the compile_commands.json from
+        --build-dir=<dir> or the usual build locations, and merges their
+        diagnostics as CT:<check> and CZ:<check> rows. --clang-tidy=<path>,
+        --clazy=<path>, --clang-tidy-config=<file> and
+        --analyser-timeout=<seconds> tune that; the status of each tool
+        is printed before the summary table. A missing tool or compile
+        database is reported, not an error. Linter rules the tools
+        supersede (qt_analysers.SUPERSEDED_RULES) are dropped on the
+        files a tool analysed without failure. The tools compile the
+        working tree, so with --diff their line numbers are mapped back
+        to the end of the range, and diagnostics on lines edited since
+        are dropped.
 Exit code: 0 if no findings, 1 if findings found, 2 on usage or git
            errors.
 
@@ -53,6 +71,7 @@ Known limitations:
 
 from __future__ import annotations
 
+import difflib
 import os
 import re
 import shlex
@@ -60,6 +79,8 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+import qt_analysers
 
 
 # ---------------------------------------------------------------------------
@@ -238,11 +259,15 @@ RE_STRUCTURAL_MUT = re.compile(
 )
 
 # ERR
-RE_ERR1_OPEN = re.compile(r'\.open\s*\(')
+RE_ERR1_OPEN = re.compile(r'(?:\.|->)open\s*\(')
 RE_ERR1_IODEV = re.compile(
     r'QIODevice|ReadOnly|WriteOnly|ReadWrite|Append|Truncate'
 )
-RE_ERR1_GUARDED = re.compile(r'(if|while|bool|!|Q_ASSERT|assert|return)\s')
+# The call is a whole statement (file.open(...); d->file.open(...);), so
+# nothing uses the result: not if/!, QVERIFY/QCOMPARE, assignment or return.
+# A match inside parentheses is an if/for initializer: if (QFile f; f.open())
+RE_ERR1_DISCARDED = re.compile(
+    r'(?:^|;)\s*(?:[\w:]+(?:\([^()]*\))?\s*(?:\.|->)\s*)+open\s*\(')
 RE_ERR2_FROMJSON = re.compile(r'QJsonDocument::fromJson')
 RE_ERR2_VALID = re.compile(r'(isNull|isObject|isArray|isEmpty|\.error)')
 RE_ERR3_READALL = re.compile(r'reply->readAll|reply->read\s*\(')
@@ -494,15 +519,20 @@ def _scope_truncated_window(
 # Per-file scanner
 # ---------------------------------------------------------------------------
 
-def scan_file(filepath: str, framework: bool = False) -> list[Finding]:
-    """Scan a single file and return all findings."""
+def scan_file(filepath: str, framework: bool = False,
+              text: str | None = None) -> list[Finding]:
+    """Scan a single file and return all findings. `text` replaces the
+    file's content on disk, as when the end of a diff range differs from
+    the working tree."""
     findings: list[Finding] = []
     path = Path(filepath)
 
     try:
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        if text is None:
+            text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return findings
+    lines = text.splitlines()
 
     ext = path.suffix.lstrip(".")
     is_header = ext in ("h", "hpp")
@@ -609,10 +639,11 @@ def scan_file(filepath: str, framework: bool = False) -> list[Finding]:
             emit(lineno, "LCY-3",
               "Q_ASSERT wraps side-effectful call \u2014 compiled out in release")
 
-        # ERR-1: QFile::open without guard (needs 2 positive + 1 negative)
+        # ERR-1: QFile::open with its result discarded
         if (RE_ERR1_OPEN.search(line)
                 and RE_ERR1_IODEV.search(line)
-                and not RE_ERR1_GUARDED.search(line)):
+                and any(line[:m.start()].count("(") == line[:m.start()].count(")")
+                        for m in RE_ERR1_DISCARDED.finditer(line))):
             emit(lineno, "ERR-1",
               "QFile::open() return not checked \u2014 silent failure if file cannot open")
 
@@ -761,35 +792,95 @@ def scan_file(filepath: str, framework: bool = False) -> list[Finding]:
 
 CPP_SUFFIXES = (".cpp", ".cc", ".cxx", ".h", ".hh", ".hpp", ".hxx")
 RE_HUNK = re.compile(r"^@@ -\S+ \+(\d+)(?:,(\d+))? @@")
+RE_INDEX = re.compile(r"^index [0-9a-f]+\.\.([0-9a-f]+)")
 
 
-def changed_lines(diff_args: list[str]) -> tuple[str, dict[str, set[int]]]:
+def git(*args: str) -> str:
+    return subprocess.run(["git", *args], capture_output=True, text=True,
+                          check=True).stdout
+
+
+def get_changed_lines(diff_args: list[str]
+                      ) -> tuple[str, dict[str, set[int]], dict[str, str]]:
     """Return the repository root and, per changed C++ file (relative to
-    the root), the line numbers added or modified by `git diff <diff_args>`.
-    Files with deletions only map to an empty set."""
-    def git(*args: str) -> str:
-        return subprocess.run(["git", *args], capture_output=True, text=True,
-                              check=True).stdout
-
+    the root), the line numbers added or modified by `git diff <diff_args>`
+    and the blob of the file at the end of the range. Files with deletions
+    only map to an empty set; a pure rename has no blob."""
     root = git("rev-parse", "--show-toplevel").strip()
     diff = git("-C", root, "-c", "core.quotePath=false", "diff", "-U0",
-               "--no-color", "--no-ext-diff", "--src-prefix=a/",
-               "--dst-prefix=b/", *diff_args)
+               "--full-index", "--no-color", "--no-ext-diff",
+               "--src-prefix=a/", "--dst-prefix=b/", *diff_args)
     changed: dict[str, set[int]] = {}
+    blobs: dict[str, str] = {}
+    blob: str | None = None
     current: set[int] | None = None
     for line in diff.splitlines():
-        if line.startswith("+++ "):
+        if line.startswith("diff --git "):
+            blob = None
+            current = None
+        elif current is None and RE_INDEX.match(line):
+            blob = RE_INDEX.match(line).group(1)
+        elif line.startswith("+++ "):
             path = line[4:].rstrip("\t")
             current = None
             if path.startswith("b/") and path.endswith(CPP_SUFFIXES):
                 current = changed.setdefault(path[2:], set())
+                if blob:
+                    blobs[path[2:]] = blob
         elif current is not None and line.startswith("@@"):
             match = RE_HUNK.match(line)
             if match:
                 start = int(match.group(1))
                 count = int(match.group(2)) if match.group(2) is not None else 1
                 current.update(range(start, start + count))
-    return root, changed
+    return root, changed, blobs
+
+
+def read_range_end_texts(root: str, blobs: dict[str, str]) -> dict[str, str]:
+    """Return, per file whose working tree content differs from its blob
+    at the end of the diff range, the blob's text. A range ending at the
+    working tree gives the working tree's own hashes, so nothing differs."""
+    rels = [rel for rel in sorted(blobs) if os.path.isfile(os.path.join(root, rel))]
+    if not rels:
+        return {}
+    # hash-object applies the same clean filters as git diff; without -w
+    # it writes nothing
+    hashes = git("-C", root, "hash-object", "--", *rels).split()
+    texts: dict[str, str] = {}
+    for rel, disk in zip(rels, hashes):
+        if disk != blobs[rel]:
+            data = subprocess.run(["git", "-C", root, "cat-file", "blob", blobs[rel]],
+                                  capture_output=True, check=True).stdout
+            texts[rel] = data.decode("utf-8", errors="replace")
+    return texts
+
+
+def map_diags_to_range_end(diags: list[qt_analysers.Diag],
+                           end_texts: dict[str, str]
+                           ) -> tuple[list[qt_analysers.Diag], dict[str, set[int]]]:
+    """The analysers compiled the working tree; move their diagnostics on
+    the files in `end_texts` to the line numbers at the end of the diff
+    range, dropping those on lines edited since. Returns the diagnostics
+    and, per such file, the range-end lines that the working tree still
+    has, the only ones the analysers saw."""
+    # working tree line -> range-end line, per file
+    to_end: dict[str, dict[int, int]] = {}
+    for filepath, text in end_texts.items():
+        try:
+            disk = Path(filepath).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            disk = ""
+        to_end[filepath] = {}
+        for tag, i1, i2, j1, _ in difflib.SequenceMatcher(
+                None, text.splitlines(), disk.splitlines(),
+                autojunk=False).get_opcodes():
+            if tag == "equal":
+                to_end[filepath].update((j1 + k + 1, i1 + k + 1)
+                                        for k in range(i2 - i1))
+    kept = [d._replace(line=to_end[d.file][d.line]) if d.file in to_end else d
+            for d in diags
+            if d.file not in to_end or d.line in to_end[d.file]]
+    return kept, {f: set(m.values()) for f, m in to_end.items()}
 
 
 def main() -> int:
@@ -800,17 +891,41 @@ def main() -> int:
               file=sys.stderr)
         print("       qt_review_lint.py [--framework] [--summary] --diff=<git diff args>",
               file=sys.stderr)
+        print("       analysers: [--analyse] [--clang-tidy[=<path>]] [--clazy[=<path>]] "
+              "[--build-dir=<dir>] [--clang-tidy-config=<file>] "
+              "[--analyser-timeout=<s>]", file=sys.stderr)
         return 2
 
     framework = False
     summary = False
     diff_args: list[str] | None = None
+    analysers: dict[str, str] = {}
+    build_dir: str | None = None
+    tidy_config: str | None = None
+    analyser_timeout = qt_analysers.DEFAULT_TIMEOUT
     files: list[str] = []
     for arg in sys.argv[1:]:
         if arg == "--framework":
             framework = True
         elif arg == "--summary":
             summary = True
+        elif arg == "--analyse":
+            analysers.setdefault("clang-tidy", "")
+            analysers.setdefault("clazy", "")
+        elif arg == "--clang-tidy" or arg.startswith("--clang-tidy="):
+            analysers["clang-tidy"] = arg[len("--clang-tidy="):]
+        elif arg == "--clazy" or arg.startswith("--clazy="):
+            analysers["clazy"] = arg[len("--clazy="):]
+        elif arg.startswith("--build-dir="):
+            build_dir = arg[len("--build-dir="):]
+        elif arg.startswith("--clang-tidy-config="):
+            tidy_config = arg[len("--clang-tidy-config="):]
+        elif arg.startswith("--analyser-timeout="):
+            try:
+                analyser_timeout = int(arg[len("--analyser-timeout="):])
+            except ValueError:
+                print(f"Error: bad {arg}", file=sys.stderr)
+                return 2
         elif arg.startswith("--diff="):
             diff_args = shlex.split(arg[len("--diff="):])
         elif arg == "--files-from=-":
@@ -820,12 +935,19 @@ def main() -> int:
 
     root: str | None = None
     changed: dict[str, set[int]] = {}
+    # Per file whose working tree differs from the end of the diff range:
+    # its text there, and the range-end lines the working tree still has
+    end_texts: dict[str, str] = {}
+    seen_lines: dict[str, set[int]] = {}
+    drift_status: list[str] = []
     if diff_args is not None:
         if files:
             print("Error: --diff takes no file arguments", file=sys.stderr)
             return 2
         try:
-            root, changed = changed_lines(diff_args)
+            root, changed, blobs = get_changed_lines(diff_args)
+            end_texts = {os.path.join(root, rel): text for rel, text
+                         in read_range_end_texts(root, blobs).items()}
         except (OSError, subprocess.CalledProcessError) as e:
             detail = getattr(e, "stderr", None) or str(e)
             print(f"Error: git diff failed: {detail.strip()}", file=sys.stderr)
@@ -839,9 +961,45 @@ def main() -> int:
         print("Error: no input files specified", file=sys.stderr)
         return 2
 
+    if end_texts:
+        names = ", ".join(sorted(os.path.relpath(f, root) for f in end_texts))
+        drift_status.append("diff: line numbers refer to the end of the range; "
+                            f"working tree differs: {names}")
+
     all_findings: list[Finding] = []
     for filepath in files:
-        all_findings.extend(scan_file(filepath, framework=framework))
+        all_findings.extend(scan_file(filepath, framework=framework,
+                                      text=end_texts.get(filepath)))
+
+    analyser_status: list[str] = []
+    if analysers:
+        bases = [os.getcwd()] if root is None else [os.getcwd(), root]
+        diags, analyser_status, covered = qt_analysers.run_analysers(
+            analysers, files, build_dir, bases, framework, tidy_config,
+            analyser_timeout)
+        if end_texts:
+            kept, seen_lines = map_diags_to_range_end(diags, end_texts)
+            if len(kept) < len(diags):
+                drift_status.append(f"analysers: {len(diags) - len(kept)} diagnostic(s) "
+                                    "dropped on lines edited after the end of the range")
+            diags = kept
+        # Trust the tools over the linter rules they supersede, on the
+        # files they analysed: a silent tool is an answer too. On a file
+        # edited since the end of the range, only on lines the tools saw.
+        superseded = qt_analysers.select_superseded_rules(covered, tidy_config is not None)
+        if superseded:
+            all_findings = [f for f in all_findings
+                            if f.rule not in superseded
+                            or f.file not in covered[superseded[f.rule]]
+                            or (f.file in seen_lines and f.line not in seen_lines[f.file])]
+            by_tool = {tool: ", ".join(sorted(r for r, t in superseded.items() if t == tool))
+                       for tool in sorted(set(superseded.values()))}
+            analyser_status.append("analysers: superseded on analysed files: " + ", ".join(
+                f"{tool} ({rules})" for tool, rules in by_tool.items()))
+        all_findings.extend(Finding(*d) for d in diags)
+    if not summary:
+        for line in drift_status + analyser_status:
+            print(line, file=sys.stderr)
 
     if root is not None:
         all_findings = [f for f in all_findings
@@ -861,6 +1019,8 @@ def main() -> int:
                   f"{total} added or modified line(s)")
             print("  " + "  ".join(f"{rel} +{len(lines)}"
                                    for rel, lines in sorted(changed.items())))
+        for line in drift_status + analyser_status:
+            print(line)
         print_summary(all_findings, root)
     else:
         for finding in all_findings:
