@@ -31,7 +31,7 @@ higher-quality answers and fewer hallucinations.
 
 | | Generic LLM | Web search tool | **Qt Documentation MCP** |
 |---|---|---|---|
-| Version-pinned | No | No | **Yes (6.8.4, 6.11.0)** |
+| Version-pinned | No | No | **Yes (5.15, 6.8 LTS, 6.11, 6.12)** |
 | Always up to date | No | Sort of | **Yes** |
 | Structured results | No | No | **Yes (typed tools)** |
 | Zero local setup | Yes | Yes | **Yes (hosted)** |
@@ -43,9 +43,11 @@ different client at the hosted instance, see [Manual setup](setup-manual.md).
 
 ## Setting up the Qt MCP server
 
-A shared instance hosted by The Qt Company is available with
-**Qt 6.8.4** and **Qt 6.11.0** documentation loaded — no local
-binary required.
+A shared instance hosted by The Qt Company serves the Qt framework
+documentation, and the released documentation of Qt tools and
+products such as Qt Creator, Qt Design Studio, Qt for MCUs,
+Boot to Qt, Squish and Coco — no local binary required. See
+[Products and versions](tool-reference.md#products-and-versions).
 
 **Endpoint:** `https://qt-docs-mcp.qt.io/mcp`
 
@@ -63,8 +65,8 @@ Two ways to wire it up:
 
 | Tool | Purpose |
 |---|---|
-| `qt_documentation_search` | Search Qt docs with optional version, module, intent, and type filters. |
-| `qt_documentation_read` | Fetch the full content of a specific documentation page. |
+| `qt_documentation_search` | Search Qt docs with optional version, product, module, intent, and type filters. |
+| `qt_documentation_read` | Fetch a documentation page, or only one member of it, such as a single function or property. |
 
 See [Tool reference](tool-reference.md) for parameters and
 examples.
