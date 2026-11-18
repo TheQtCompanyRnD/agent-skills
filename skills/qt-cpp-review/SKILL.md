@@ -137,9 +137,15 @@ When `$ARGUMENTS` contains "analyse", add `--analyse` (and
 installation's clang-tidy and clazy-standalone over the translation
 units in scope, using a `compile_commands.json` it finds itself, and
 merges their diagnostics as `CT:<check>` / `CZ:<check>` rows. Copy the
-printed `clang-tidy:` / `clazy:` status lines into the report header;
-do not look for the tools or configure a build yourself. The analysers
-are authoritative for type-level findings, the linter for Qt policy
+printed `clang-tidy:` / `clazy:` status lines into the report header
+verbatim, never shortened; do not look for the tools or configure a
+build yourself. If they say `skipped (no compile_commands.json; ...)`,
+add one line below the header: to enable the analysers, either build
+the project once in Qt Creator or configure it with CMake using
+`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` and build it, then re-run with
+`analyse`; name the build folder with `--build-dir` if it is
+elsewhere. The analysers are authoritative for type-level findings,
+the linter for Qt policy
 rules; the linter drops its rules they supersede on files they
 covered and lists them in the `superseded` status line. Otherwise,
 if `compile_commands.json` exists in the repo root, below `build*/`
