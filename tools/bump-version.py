@@ -4,7 +4,8 @@
 """Bump the qtaiskills plugin version across all metadata files.
 
 Updates ``.claude-plugin/marketplace.json``, ``.claude-plugin/plugin.json``,
-and ``gemini-extension.json`` to the supplied version on a fresh branch off
+``.cursor-plugin/marketplace.json``, ``.cursor-plugin/plugin.json``, and
+``gemini-extension.json`` to the supplied version on a fresh branch off
 ``origin/dev``, commits the bump, and optionally pushes it to Gerrit
 (``refs/for/dev``). The bump always lands on ``dev`` first: that is the trunk
 every release is cut from, and keeping the bump there means cherry-picks and
@@ -54,6 +55,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 VERSION_FILES = (
     ".claude-plugin/marketplace.json",
     ".claude-plugin/plugin.json",
+    ".cursor-plugin/marketplace.json",
+    ".cursor-plugin/plugin.json",
     "gemini-extension.json",
 )
 
