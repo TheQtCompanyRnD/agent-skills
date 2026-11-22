@@ -48,6 +48,7 @@ Apply these while designing. Do not ask about each one — use them to inform de
 - **Ockham's Razor:** When two designs are equivalent, choose the simpler one.
 - **Performance Load:** Fewer steps = higher task completion.
 - **Five Hat Racks:** Organise by category, time, location, alphabet, or continuum.
+
 **Perception and interaction:**
 - **Jakob's Law:** Match patterns users already know.
 - **Affordance:** Controls should look like what they do.
@@ -61,19 +62,23 @@ Apply these while designing. Do not ask about each one — use them to inform de
 - **Doherty Threshold:** System feedback within 400 ms, or show a progress indicator.
 - **Aesthetic-Usability Effect:** Polished design is perceived as more usable.
 - **Wayfinding:** Users must always know where they are, where they've been, where they can go.
+
 **Reading patterns (use to guide information placement):**
 - **F-shaped:** Text-heavy content — top bar, shorter secondary bar, left-edge scan.
 - **Z-shaped:** Sparse content — top-left → top-right → diagonal → bottom-right.
 - **Layer-cake:** Users scan headings and skip body text.
 - **Spotted:** Users jump to landmarks — links, capitals, list items.
+
 **Buttons and CTAs:**
 - Limit CTA buttons per group. OK + Cancel = one group; additional actions must be visually secondary.
 - Use Proximity and Similarity to distinguish primary, secondary, and tertiary controls.
+
 **Error prevention:**
 - Design affordances that guide correct use.
 - Allow undo wherever technically possible.
 - Confirm before destructive or irreversible actions.
 - Add alarms or prompts for danger states.
+  
 **Responsiveness (desktop/web only — embedded: see section 4):**
 - Design to your primary target's resolution first — desktop with chrome, embedded fixed-resolution, or a window-resize range typical for the application. Stack, collapse, or hide secondary content for narrower widths.
 - Minimum layout width: 240 px. Stack or collapse elements below this.
